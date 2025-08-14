@@ -12,7 +12,7 @@
 RootModule = 'ARG-Kit.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.0.2'
+ModuleVersion = '0.0.3'
 
 # Supported PSEditions
 CompatiblePSEditions =  @('Desktop', 'Core')
@@ -69,7 +69,14 @@ RequiredModules = @('Az.Accounts','Az.ResourceGraph')
 # NestedModules = @()
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = @('Get-ArgOrphanedNetworkSecurityGroups', 'Get-ArgOrphanedPublicIPAddresses','Get-ArgOrphanedDisks', 'Get-ArgOrphanedNetworkInterfaceCards', 'Get-ArgSecurityPublicAccessStorageAccounts', 'Get-ArgSecurityPublicAccessKeyVaults', 'Get-ArgCostHybridUseBenefitsNotEnabled', 'Get-ArgCostHybridUseBenefitsEnabled', 'Get-ArgPolicyComplianceByPolicyAssignment', 'Get-ArgPolicyComplianceByResourceType', 'Get-ArgPolicyAllNonCompliantResources', 'Get-ArgPendingUpdates', 'Get-ArgWindowsUpdateInstallations', 'Get-ArgLinuxUpdateInstallations', 'Get-ArgDeprecationBasicPublicIpAddressess', 'Get-ArgDeprecationTlsStorageAccounts')
+FunctionsToExport = @('Get-ArgOrphanedNetworkSecurityGroups', 'Get-ArgOrphanedPublicIPAddresses',
+'Get-ArgOrphanedDisks', 'Get-ArgOrphanedNetworkInterfaceCards', 'Get-ArgOrphanedLoadBalancers' , 
+'Get-ArgOrphanedAppServicePlans', 'Get-ArgSecurityPublicAccessStorageAccounts', 'Get-ArgSecurityHttpsOnlyStorageAccounts', 
+'Get-ArgSecurityPublicAccessKeyVaults', 'Get-ArgSecurityAllResourcesWithSMSI', 'Get-ArgSecurityAllDefenderForCloudRecommendations' , 
+'Get-ArgCostHybridUseBenefitsNotEnabled', 'Get-ArgCostHybridUseBenefitsEnabled', 'Get-ArgCostSavingsSummary', 
+'Get-ArgPolicyComplianceByPolicyAssignment', 'Get-ArgPolicyComplianceByResourceType', 'Get-ArgPolicyAllNonCompliantResources', 
+'Get-ArgPendingUpdates', 'Get-ArgWindowsUpdateInstallations', 'Get-ArgLinuxUpdateInstallations', 'Get-ArgDeprecationBasicPublicIpAddressess', 
+'Get-ArgDeprecationTlsStorageAccounts', 'Get-ArgMonitorAlerts')
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 CmdletsToExport = '*'
