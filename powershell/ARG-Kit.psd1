@@ -76,7 +76,7 @@ FunctionsToExport = @('Get-ArgOrphanedNetworkSecurityGroups', 'Get-ArgOrphanedPu
 'Get-ArgCostHybridUseBenefitsNotEnabled', 'Get-ArgCostHybridUseBenefitsEnabled', 'Get-ArgCostSavingsSummary', 
 'Get-ArgPolicyComplianceByPolicyAssignment', 'Get-ArgPolicyComplianceByResourceType', 'Get-ArgPolicyAllNonCompliantResources', 
 'Get-ArgPendingUpdates', 'Get-ArgWindowsUpdateInstallations', 'Get-ArgLinuxUpdateInstallations', 'Get-ArgDeprecationBasicPublicIpAddressess', 
-'Get-ArgDeprecationTlsStorageAccounts', 'Get-ArgMonitorAlertsLast2Hours', 'Get-ArgMonitorActiveServiceHealthAlerts')
+'Get-ArgDeprecationTlsStorageAccounts', 'Get-ArgDeprecationTlsSqlServers' ,'Get-ArgMonitorAlertsLast2Hours', 'Get-ArgMonitorActiveServiceHealthAlerts')
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 CmdletsToExport = '*'
