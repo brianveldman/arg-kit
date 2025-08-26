@@ -72,8 +72,8 @@ RequiredModules = @('Az.Accounts','Az.ResourceGraph')
 FunctionsToExport = @('Get-ArgOrphanedNetworkSecurityGroups', 'Get-ArgOrphanedPublicIPAddresses',
 'Get-ArgOrphanedDisks', 'Get-ArgOrphanedNetworkInterfaceCards', 'Get-ArgOrphanedLoadBalancers' , 
 'Get-ArgOrphanedAppServicePlans', 'Get-ArgSecurityPublicAccessStorageAccounts', 'Get-ArgSecurityHttpsOnlyStorageAccounts', 
-'Get-ArgSecurityPublicAccessKeyVaults', 'Get-ArgSecurityAllResourcesWithSMSI', 'Get-ArgSecurityAllDefenderForCloudRecommendations' , 
-'Get-ArgCostHybridUseBenefitsNotEnabled', 'Get-ArgCostHybridUseBenefitsEnabled', 'Get-ArgCostSavingsSummary', 
+'Get-ArgSecurityPublicAccessKeyVaults', 'Get-ArgSecurityAllResourcesWithSMSI', 'Get-ArgSecurityAllDefenderForCloudRecommendations', 
+'Get-ArgSecurityDefenderForCloudCoverage', 'Get-ArgCostHybridUseBenefitsNotEnabled', 'Get-ArgCostHybridUseBenefitsEnabled', 'Get-ArgCostSavingsSummary', 
 'Get-ArgPolicyComplianceByPolicyAssignment', 'Get-ArgPolicyComplianceByResourceType', 'Get-ArgPolicyAllNonCompliantResources', 
 'Get-ArgPendingUpdates', 'Get-ArgWindowsUpdateInstallations', 'Get-ArgLinuxUpdateInstallations', 'Get-ArgDeprecationBasicPublicIpAddressess', 
 'Get-ArgDeprecationTlsStorageAccounts', 'Get-ArgDeprecationTlsSqlServers' ,'Get-ArgMonitorAlertsLast2Hours', 'Get-ArgMonitorActiveServiceHealthAlerts')
