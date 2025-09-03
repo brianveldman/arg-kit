@@ -1,4 +1,4 @@
-function Get-ArgDeprecationBasicPublicIpAddressess {
+function Get-ArgDeprecationBasicPublicIpAddresses {
     $query = @"
 Resources
 | where type =~ 'microsoft.network/publicIPAddresses'
