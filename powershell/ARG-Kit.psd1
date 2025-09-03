@@ -12,7 +12,7 @@
 RootModule = 'ARG-Kit.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.0.3'
+ModuleVersion = '0.0.4'
 
 # Supported PSEditions
 CompatiblePSEditions =  @('Desktop', 'Core')
@@ -73,7 +73,7 @@ FunctionsToExport = @('Get-ArgOrphanedNetworkSecurityGroups', 'Get-ArgOrphanedPu
 'Get-ArgOrphanedDisks', 'Get-ArgOrphanedNetworkInterfaceCards', 'Get-ArgOrphanedLoadBalancers' , 
 'Get-ArgOrphanedAppServicePlans', 'Get-ArgSecurityPublicAccessStorageAccounts', 'Get-ArgSecurityHttpsOnlyStorageAccounts', 
 'Get-ArgSecurityPublicAccessKeyVaults', 'Get-ArgSecurityAllResourcesWithSMSI', 'Get-ArgSecurityAllDefenderForCloudRecommendations', 
-'Get-ArgSecurityDefenderForCloudCoverage', 'Get-ArgCostHybridUseBenefitsNotEnabled', 'Get-ArgCostHybridUseBenefitsEnabled', 'Get-ArgCostSavingsSummary', 
+'Get-ArgSecurityDefenderForCloudCoverage', 'Get-ArgSecurityPurgeProtectionKeyVaults', 'Get-ArgCostHybridUseBenefitsNotEnabled', 'Get-ArgCostHybridUseBenefitsEnabled', 'Get-ArgCostSavingsSummary', 
 'Get-ArgPolicyComplianceByPolicyAssignment', 'Get-ArgPolicyComplianceByResourceType', 'Get-ArgPolicyAllNonCompliantResources', 
 'Get-ArgPendingUpdates', 'Get-ArgWindowsUpdateInstallations', 'Get-ArgLinuxUpdateInstallations', 'Get-ArgDeprecationBasicPublicIpAddresses', 
 'Get-ArgDeprecationTlsStorageAccounts', 'Get-ArgDeprecationTlsSqlServers' ,'Get-ArgMonitorAlertsLast2Hours', 'Get-ArgMonitorActiveServiceHealthAlerts')
