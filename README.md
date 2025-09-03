@@ -27,7 +27,6 @@ PowerShell module to simplify working with **Azure Resource Graph (ARG)**. The k
 ## 🚀 Getting Started
 
 ### Prerequisites
-- [Az.ResourceGraph](https://learn.microsoft.com/azure/governance/resource-graph/overview) PowerShell module
 - Reader or higher role in the target subscriptions
 
 ### Installation
