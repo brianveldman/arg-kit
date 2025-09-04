@@ -71,7 +71,7 @@ RequiredModules = @('Az.Accounts','Az.ResourceGraph')
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
 FunctionsToExport = @('Get-ArgOrphanedNetworkSecurityGroups', 'Get-ArgOrphanedPublicIPAddresses',
 'Get-ArgOrphanedDisks', 'Get-ArgOrphanedNetworkInterfaceCards', 'Get-ArgOrphanedLoadBalancers' , 
-'Get-ArgOrphanedAppServicePlans', 'Get-ArgSecurityPublicAccessStorageAccounts', 'Get-ArgSecurityHttpsOnlyStorageAccounts', 
+'Get-ArgOrphanedAppServicePlans', 'Get-ArgOrphanedAvailabilitySets', 'Get-ArgSecurityPublicAccessStorageAccounts', 'Get-ArgSecurityHttpsOnlyStorageAccounts', 
 'Get-ArgSecurityPublicAccessKeyVaults', 'Get-ArgSecurityAllResourcesWithSMSI', 'Get-ArgSecurityAllDefenderForCloudRecommendations', 
 'Get-ArgSecurityDefenderForCloudCoverage', 'Get-ArgSecurityPurgeProtectionKeyVaults', 'Get-ArgCostHybridUseBenefitsNotEnabled', 'Get-ArgCostHybridUseBenefitsEnabled', 'Get-ArgCostSavingsSummary', 
 'Get-ArgPolicyComplianceByPolicyAssignment', 'Get-ArgPolicyComplianceByResourceType', 'Get-ArgPolicyAllNonCompliantResources', 
