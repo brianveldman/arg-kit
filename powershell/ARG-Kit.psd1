@@ -72,11 +72,12 @@ RequiredModules = @('Az.Accounts','Az.ResourceGraph')
 FunctionsToExport = @('Get-ArgOrphanedNetworkSecurityGroups', 'Get-ArgOrphanedPublicIPAddresses',
 'Get-ArgOrphanedDisks', 'Get-ArgOrphanedNetworkInterfaceCards', 'Get-ArgOrphanedLoadBalancers' , 
 'Get-ArgOrphanedAppServicePlans', 'Get-ArgOrphanedAvailabilitySets', 'Get-ArgSecurityPublicAccessStorageAccounts', 'Get-ArgSecurityHttpsOnlyStorageAccounts', 
-'Get-ArgSecurityPublicAccessKeyVaults', 'Get-ArgSecurityAllResourcesWithSMSI', 'Get-ArgSecurityAllDefenderForCloudRecommendations', 
-'Get-ArgSecurityDefenderForCloudCoverage', 'Get-ArgSecurityPurgeProtectionKeyVaults', 'Get-ArgCostHybridUseBenefitsNotEnabled', 'Get-ArgCostHybridUseBenefitsEnabled', 'Get-ArgCostSavingsSummary', 
-'Get-ArgPolicyComplianceByPolicyAssignment', 'Get-ArgPolicyComplianceByResourceType', 'Get-ArgPolicyAllNonCompliantResources', 
+'Get-ArgSecurityPublicAccessKeyVaults', 'Get-ArgSecurityPublicAccessOpenAI' ,'Get-ArgSecurityAllResourcesWithSMSI', 'Get-ArgSecurityAllDefenderForCloudRecommendations', 
+'Get-ArgSecurityDefenderForCloudCoverage', 'Get-ArgSecurityPurgeProtectionKeyVaults', 'Get-ArgCostHybridUseBenefitsNotEnabled', 'Get-ArgCostHybridUseBenefitsEnabled', 
+'Get-ArgCostSavingsSummary', 'Get-ArgPolicyComplianceByPolicyAssignment', 'Get-ArgPolicyComplianceByResourceType', 'Get-ArgPolicyAllNonCompliantResources', 
 'Get-ArgPendingUpdates', 'Get-ArgWindowsUpdateInstallations', 'Get-ArgLinuxUpdateInstallations', 'Get-ArgDeprecationBasicPublicIpAddresses', 
-'Get-ArgDeprecationTlsStorageAccounts', 'Get-ArgDeprecationTlsSqlServers' ,'Get-ArgMonitorAlertsLast2Hours', 'Get-ArgMonitorActiveServiceHealthAlerts', 'Get-ArgMonitorActivePlannedMaintenanceEvents')
+'Get-ArgDeprecationTlsStorageAccounts', 'Get-ArgDeprecationTlsSqlServers' ,'Get-ArgMonitorAlertsLast2Hours', 'Get-ArgMonitorActiveServiceHealthAlerts', 
+'Get-ArgMonitorActivePlannedMaintenanceEvents')
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 CmdletsToExport = '*'
