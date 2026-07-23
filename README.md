@@ -33,3 +33,24 @@ PowerShell module to simplify working with **Azure Resource Graph (ARG)**. The k
 
 ```powershell
 Install-Module -Name ARG-Kit -Scope CurrentUser
+```
+
+### Generate an overview HTML report
+
+Run all categories and generate one total overview HTML report:
+
+```powershell
+Get-ArgOverviewReport
+```
+
+Run only selected categories and write to a specific file:
+
+```powershell
+Get-ArgOverviewReport -Category Security,Cost,Policy -OutputPath .\arg-overview.html
+```
+
+Generate and open the report directly:
+
+```powershell
+Get-ArgOverviewReport -OpenReport
+```
