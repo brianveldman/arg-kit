@@ -4,7 +4,7 @@ function Get-ArgOverviewReport {
         [ValidateSet('All', 'Orphaned', 'Security', 'Cost', 'Policy', 'Updates', 'Deprecations', 'Monitor')]
         [string[]]$Category = @('All'),
 
-        [string]$OutputPath = (Join-Path -Path (Get-Location) -ChildPath ("arg-kit-overview-{0:yyyyMMdd-HHmmss}.html" -f (Get-Date))),
+        [string]$OutputPath,
 
         [switch]$OpenReport
     )
@@ -61,12 +61,12 @@ function Get-ArgOverviewReport {
         $Category | Select-Object -Unique
     }
 
+    if (-not $OutputPath) {
+        $OutputPath = Join-Path -Path (Get-Location) -ChildPath ("arg-kit-overview-{0:yyyyMMdd-HHmmss}.html" -f (Get-Date))
+    }
+
     $summaryRows = @()
     $detailSections = @()
-    $htmlEncode = {
-        param([AllowNull()][string]$Value)
-        [System.Net.WebUtility]::HtmlEncode($Value)
-    }
 
     foreach ($currentCategory in $selectedCategories) {
         foreach ($checkName in $categoryChecks[$currentCategory]) {
@@ -99,15 +99,15 @@ function Get-ArgOverviewReport {
             }
 
             if ($status -eq 'Error') {
-                $safeCheckName = & $htmlEncode $checkName
-                $safeErrorMessage = & $htmlEncode $errorMessage
+                $safeCheckName = [System.Net.WebUtility]::HtmlEncode($checkName)
+                $safeErrorMessage = [System.Net.WebUtility]::HtmlEncode($errorMessage)
                 $detailSections += "<h3>$safeCheckName</h3><p class='error'>$safeErrorMessage</p>"
             } elseif ($resultCount -eq 0) {
-                $safeCheckName = & $htmlEncode $checkName
+                $safeCheckName = [System.Net.WebUtility]::HtmlEncode($checkName)
                 $detailSections += "<h3>$safeCheckName</h3><p>No results returned.</p>"
             } else {
                 $detailHtml = $resultData | ConvertTo-Html -Fragment
-                $safeCheckName = & $htmlEncode $checkName
+                $safeCheckName = [System.Net.WebUtility]::HtmlEncode($checkName)
                 $detailSections += "<h3>$safeCheckName</h3>$detailHtml"
             }
         }
