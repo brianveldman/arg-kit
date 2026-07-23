@@ -63,6 +63,10 @@ function Get-ArgOverviewReport {
 
     $summaryRows = @()
     $detailSections = @()
+    $htmlEncode = {
+        param([AllowNull()][string]$Value)
+        [System.Net.WebUtility]::HtmlEncode($Value)
+    }
 
     foreach ($currentCategory in $selectedCategories) {
         foreach ($checkName in $categoryChecks[$currentCategory]) {
@@ -78,10 +82,10 @@ function Get-ArgOverviewReport {
                 $errorMessage = $_.Exception.Message
             }
 
-            $resultCount = if ($null -eq $resultData) {
-                0
-            } elseif ($resultData -is [array]) {
+            $resultCount = if ($resultData -is [array]) {
                 $resultData.Count
+            } elseif ($null -eq $resultData) {
+                0
             } else {
                 1
             }
@@ -95,12 +99,16 @@ function Get-ArgOverviewReport {
             }
 
             if ($status -eq 'Error') {
-                $detailSections += "<h3>$checkName</h3><p class='error'>$errorMessage</p>"
+                $safeCheckName = & $htmlEncode $checkName
+                $safeErrorMessage = & $htmlEncode $errorMessage
+                $detailSections += "<h3>$safeCheckName</h3><p class='error'>$safeErrorMessage</p>"
             } elseif ($resultCount -eq 0) {
-                $detailSections += "<h3>$checkName</h3><p>No results returned.</p>"
+                $safeCheckName = & $htmlEncode $checkName
+                $detailSections += "<h3>$safeCheckName</h3><p>No results returned.</p>"
             } else {
                 $detailHtml = $resultData | ConvertTo-Html -Fragment
-                $detailSections += "<h3>$checkName</h3>$detailHtml"
+                $safeCheckName = & $htmlEncode $checkName
+                $detailSections += "<h3>$safeCheckName</h3>$detailHtml"
             }
         }
     }
