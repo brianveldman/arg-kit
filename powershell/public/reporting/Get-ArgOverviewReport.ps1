@@ -112,12 +112,10 @@ function Get-ArgOverviewReport {
                 $errorMessage = $_.Exception.Message
             }
 
-            $resultCount = if ($resultData -is [array]) {
-                $resultData.Count
-            } elseif ($null -eq $resultData) {
+            $resultCount = if ($null -eq $resultData) {
                 0
             } else {
-                1
+                @($resultData).Count
             }
 
             $summaryRows += [pscustomobject]@{
@@ -254,17 +252,34 @@ tbody tr:hover { background: #f8fafc; }
 .badge-findings { background: var(--accent-soft); color: var(--accent); }
 .error { color: var(--error); font-weight: 500; }
 .muted { color: var(--muted); }
-.improvement-list { list-style: none; margin: 12px 0 4px; padding: 0; }
-.improvement {
+.section-intro { color: var(--muted); font-size: 14px; margin: -8px 0 16px; max-width: 760px; }
+.focus-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; margin-bottom: 8px; }
+.focus-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 20px;
+  box-shadow: 0 1px 3px rgba(15,23,42,0.05);
+}
+.focus-card.level-high { border-left-color: var(--error); }
+.focus-card.level-medium { border-left-color: var(--warn); }
+.focus-card.level-low { border-left-color: var(--accent); }
+.focus-card.level-clear { border-left-color: var(--ok); opacity: 0.85; }
+.focus-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.focus-total { font-size: 32px; font-weight: 700; line-height: 1; color: #0f172a; }
+.focus-sub { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; margin-top: 2px; }
+.focus-list { list-style: none; margin: 14px 0 0; padding: 0; }
+.focus-list li {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  padding: 14px 0;
-  border-bottom: 1px solid var(--border);
+  gap: 10px;
+  padding: 8px 0;
+  border-top: 1px solid var(--border);
+  font-size: 13px;
 }
-.improvement:last-child { border-bottom: none; }
-.improvement-name { font-size: 15px; font-weight: 600; margin-top: 2px; }
+.focus-check { color: #334155; word-break: break-word; }
 .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 20px; border-bottom: 1px solid var(--border); }
 .tab-btn {
   background: transparent;
@@ -300,37 +315,63 @@ footer { text-align: center; color: var(--muted); font-size: 13px; margin-top: 4
     if (-not $totalFindings) { $totalFindings = 0 }
     $totalImprovements = $improvementRows.Count
 
-    if ($improvementRows.Count -gt 0) {
-        $improvementItems = foreach ($imp in $improvementRows) {
-            $impCat = [System.Net.WebUtility]::HtmlEncode([string]$imp.Category)
-            $impCheck = [System.Net.WebUtility]::HtmlEncode([string]$imp.Check)
+    $focusData = foreach ($cat in $selectedCategories) {
+        $catRows = $summaryRows | Where-Object { $_.Category -eq $cat }
+        $catImprovements = $improvementRows | Where-Object { $_.Category -eq $cat }
+        $catFindings = ($catRows | Measure-Object -Property ResultCount -Sum).Sum
+        if (-not $catFindings) { $catFindings = 0 }
+        [pscustomobject]@{
+            Category     = $cat
+            Findings     = $catFindings
+            Failed       = ($catRows | Where-Object { $_.Status -eq 'Error' }).Count
+            Improvements = @($catImprovements)
+        }
+    }
+
+    $focusCards = foreach ($focus in ($focusData | Sort-Object -Property Findings -Descending)) {
+        $safeCat = [System.Net.WebUtility]::HtmlEncode([string]$focus.Category)
+
+        if ($focus.Findings -gt 0) {
+            $level = if ($focus.Findings -ge 10) { 'high' } elseif ($focus.Findings -ge 3) { 'medium' } else { 'low' }
+            $itemsHtml = foreach ($imp in ($focus.Improvements | Sort-Object -Property Count -Descending)) {
+                $impCheck = [System.Net.WebUtility]::HtmlEncode([string]$imp.Check)
+                "<li><span class='focus-check'>$impCheck</span><span class='badge badge-findings'>$($imp.Count)</span></li>"
+            }
+            $failedNote = if ($focus.Failed -gt 0) { "<p class='error'>$($focus.Failed) check(s) failed to run.</p>" } else { '' }
             @"
-<li class="improvement">
-  <div>
-    <span class="card-category">$impCat</span>
-    <div class="improvement-name">$impCheck</div>
+<div class="focus-card level-$level">
+  <div class="focus-head">
+    <span class="card-category">$safeCat</span>
+    <span class="focus-total">$($focus.Findings)</span>
   </div>
-  <span class="badge badge-findings">$($imp.Count) to review</span>
-</li>
+  <div class="focus-sub">items to review</div>
+  <ul class="focus-list">
+$($itemsHtml -join "`n")
+  </ul>
+  $failedNote
+</div>
+"@
+        } else {
+            $failedNote = if ($focus.Failed -gt 0) { "<p class='error'>$($focus.Failed) check(s) failed to run.</p>" } else { "<p class='muted'>No items to review.</p>" }
+            @"
+<div class="focus-card level-clear">
+  <div class="focus-head">
+    <span class="card-category">$safeCat</span>
+    <span class="badge badge-clear">Clear</span>
+  </div>
+  $failedNote
+</div>
 "@
         }
-        $improvementsHtml = @"
-<h2>Possible Improvements</h2>
-<div class="panel">
-  <p class="muted">These checks returned results worth reviewing for potential clean-up, cost savings, or security and compliance improvements.</p>
-  <ul class="improvement-list">
-$($improvementItems -join "`n")
-  </ul>
-</div>
-"@
-    } else {
-        $improvementsHtml = @"
-<h2>Possible Improvements</h2>
-<div class="panel">
-  <p class="muted">No improvement opportunities found. All checks came back clear. &#127881;</p>
-</div>
-"@
     }
+
+    $improvementsHtml = @"
+<h2>Where to Focus</h2>
+<p class="section-intro">Categories are ranked by how many items need your attention. Higher counts mean more potential clean-up, cost savings, or security and compliance improvements.</p>
+<div class="focus-grid">
+$($focusCards -join "`n")
+</div>
+"@
 
     $categoryOverviewHtml = $categoryOverview | ConvertTo-Html -Fragment
     $summaryHtml = $summaryRows | ConvertTo-Html -Fragment
