@@ -47,7 +47,8 @@ function Get-ArgOverviewReport {
             'Get-ArgSecuritySoftDeleteDisabledKeyVaults',
             'Get-ArgSecuritySqlServersPublicNetworkAccess',
             'Get-ArgSecurityBlobPublicAccessStorageAccounts',
-            'Get-ArgSecurityAppServicesWithoutHttpsOnly'
+            'Get-ArgSecurityAppServicesWithoutHttpsOnly',
+            'Get-ArgSecuritySharedKeyAccessStorageAccounts'
         )
         Cost = @(
             'Get-ArgCostHybridUseBenefitsNotEnabled',
@@ -60,7 +61,8 @@ function Get-ArgOverviewReport {
             'Get-ArgCostPremiumDisksOnDeallocatedVMs'
         )
         Reliability = @(
-            'Get-ArgReliabilityVmsWithoutAvailabilityZone'
+            'Get-ArgReliabilityVmsWithoutAvailabilityZone',
+            'Get-ArgReliabilityLocallyRedundantStorageAccounts'
         )
         Governance = @(
             'Get-ArgGovernanceResourcesMissingRequiredTags'
@@ -112,6 +114,7 @@ function Get-ArgOverviewReport {
         'Get-ArgSecuritySqlServersPublicNetworkAccess'  = 'SQL Servers with Public Network Access'
         'Get-ArgSecurityBlobPublicAccessStorageAccounts' = 'Storage Accounts Allowing Blob Public Access'
         'Get-ArgSecurityAppServicesWithoutHttpsOnly'    = 'App Services Not Enforcing HTTPS'
+        'Get-ArgSecuritySharedKeyAccessStorageAccounts' = 'Storage Accounts Allowing Shared Key Access'
         'Get-ArgCostHybridUseBenefitsNotEnabled'        = 'Hybrid Use Benefit Not Enabled'
         'Get-ArgCostHybridUseBenefitsEnabled'           = 'Hybrid Use Benefit Enabled'
         'Get-ArgCostSavingsSummary'                     = 'Cost Savings Summary'
@@ -121,6 +124,7 @@ function Get-ArgOverviewReport {
         'Get-ArgCostAvdHostPoolsWithoutScalingPlan'     = 'AVD Host Pools without Scaling Plan'
         'Get-ArgCostPremiumDisksOnDeallocatedVMs'       = 'Premium Disks on Deallocated VMs'
         'Get-ArgReliabilityVmsWithoutAvailabilityZone'  = 'VMs without Availability Zone'
+        'Get-ArgReliabilityLocallyRedundantStorageAccounts' = 'Storage Accounts without Geo-Redundancy'
         'Get-ArgGovernanceResourcesMissingRequiredTags' = 'Resources Missing Required Tags'
         'Get-ArgPolicyComplianceByPolicyAssignment'     = 'Policy Compliance by Assignment'
         'Get-ArgPolicyComplianceByResourceType'         = 'Policy Compliance by Resource Type'
@@ -382,11 +386,11 @@ header.hero .inner { max-width: 1160px; margin: 0 auto; position: relative; }
   background: linear-gradient(140deg, var(--accent) 0%, var(--accent-2) 100%);
   box-shadow: 0 6px 18px rgba(142,162,255,0.35);
 }
-.brand .eyebrow { font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.6); font-weight: 600; }
+.brand .eyebrow { font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: #ffffff; font-weight: 600; }
 header.hero h1 { margin: 0; font-size: 30px; font-weight: 700; letter-spacing: -0.03em; color: #ffffff; }
-header.hero .lede { margin: 8px 0 0; color: rgba(255,255,255,0.72); font-size: 15px; max-width: 620px; }
+header.hero .lede { margin: 8px 0 0; color: rgba(255,255,255,0.9); font-size: 15px; max-width: 620px; }
 .meta { margin-top: 24px; display: flex; flex-wrap: wrap; gap: 10px 28px; font-size: 13.5px; }
-.meta .k { color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.08em; font-size: 11px; font-weight: 600; margin-right: 8px; }
+.meta .k { color: rgba(255,255,255,0.75); text-transform: uppercase; letter-spacing: 0.08em; font-size: 11px; font-weight: 600; margin-right: 8px; }
 .meta .v { color: #ffffff; }
 
 .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; margin: -32px auto 0; max-width: 1160px; padding: 0 28px; position: relative; z-index: 2; }
