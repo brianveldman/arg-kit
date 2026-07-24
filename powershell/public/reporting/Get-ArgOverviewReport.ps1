@@ -328,124 +328,165 @@ function Get-ArgOverviewReport {
     $style = @"
 <style>
 :root {
-  --bg: #0b1220;
-  --panel: #111a2e;
-  --muted: #94a3b8;
-  --border: #1e293b;
-  --accent: #60a5fa;
-  --accent-soft: rgba(96,165,250,0.16);
-  --error: #f87171;
-  --error-soft: rgba(248,113,113,0.16);
-  --ok: #4ade80;
-  --ok-soft: rgba(74,222,128,0.16);
-  --warn: #fbbf24;
+  --bg: #0a0d15;
+  --bg-soft: #0d111c;
+  --panel: #121826;
+  --panel-hover: #161d2e;
+  --muted: #8a94a7;
+  --faint: #596273;
+  --border: #212a3b;
+  --border-soft: #1a2231;
+  --text: #e8ecf4;
+  --heading: #f4f7fc;
+  --accent: #8ea2ff;
+  --accent-2: #a78bfa;
+  --accent-soft: rgba(142,162,255,0.14);
+  --error: #f47174;
+  --error-soft: rgba(244,113,116,0.14);
+  --ok: #48d19a;
+  --ok-soft: rgba(72,209,154,0.14);
+  --warn: #f5b544;
+  --warn-soft: rgba(245,181,68,0.14);
+  --shadow: 0 8px 30px rgba(0,0,0,0.28);
 }
 * { box-sizing: border-box; }
+html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
 body {
-  font-family: 'Segoe UI', system-ui, -apple-system, Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Inter, Roboto, Helvetica, Arial, sans-serif;
   margin: 0;
   background: var(--bg);
-  color: #e2e8f0;
-  line-height: 1.5;
+  background-image: radial-gradient(1200px 600px at 80% -200px, rgba(142,162,255,0.10), transparent 60%);
+  color: var(--text);
+  line-height: 1.55;
+  font-size: 15px;
 }
-.wrap { max-width: 1200px; margin: 0 auto; padding: 8px 24px 64px; }
-.wrap > h2:first-child { margin-top: 8px; }
+.num { font-variant-numeric: tabular-nums; font-feature-settings: 'tnum' 1; }
+.wrap { max-width: 1160px; margin: 0 auto; padding: 8px 28px 72px; }
+.wrap > section:first-of-type { margin-top: 4px; }
+
 header.hero {
-  background: linear-gradient(135deg, #0b1220 0%, #1e3a8a 100%);
-  color: #fff;
-  padding: 40px 24px;
+  position: relative;
+  overflow: hidden;
+  padding: 44px 28px 56px;
+  border-bottom: 1px solid var(--border-soft);
+  background:
+    radial-gradient(900px 400px at 12% -160px, rgba(167,139,250,0.16), transparent 65%),
+    linear-gradient(180deg, #0d1220 0%, var(--bg) 100%);
 }
-header.hero .inner { max-width: 1200px; margin: 0 auto; }
-header.hero h1 { margin: 0 0 8px; font-size: 28px; font-weight: 700; letter-spacing: -0.02em; }
-header.hero .meta { font-size: 14px; opacity: 0.85; display: flex; flex-wrap: wrap; gap: 20px; }
-header.hero .meta span strong { font-weight: 600; }
-.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin: -32px auto 16px; max-width: 1200px; padding: 0 24px; position: relative; }
+header.hero .inner { max-width: 1160px; margin: 0 auto; position: relative; }
+.brand { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; }
+.brand .mark {
+  width: 40px; height: 40px; border-radius: 11px;
+  display: grid; place-items: center;
+  font-weight: 700; font-size: 15px; letter-spacing: 0.02em; color: #0b0e16;
+  background: linear-gradient(140deg, var(--accent) 0%, var(--accent-2) 100%);
+  box-shadow: 0 6px 18px rgba(142,162,255,0.35);
+}
+.brand .eyebrow { font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+header.hero h1 { margin: 0; font-size: 30px; font-weight: 700; letter-spacing: -0.03em; color: var(--heading); }
+header.hero .lede { margin: 8px 0 0; color: var(--muted); font-size: 15px; max-width: 620px; }
+.meta { margin-top: 24px; display: flex; flex-wrap: wrap; gap: 10px 28px; font-size: 13.5px; color: var(--muted); }
+.meta .k { color: var(--faint); text-transform: uppercase; letter-spacing: 0.08em; font-size: 11px; font-weight: 600; margin-right: 8px; }
+.meta .v { color: var(--text); }
+
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; margin: -32px auto 0; max-width: 1160px; padding: 0 28px; position: relative; z-index: 2; }
 .stat {
-  background: var(--panel);
+  background: linear-gradient(180deg, var(--panel) 0%, var(--bg-soft) 100%);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 4px 12px rgba(15,23,42,0.06);
+  border-radius: 16px;
+  padding: 20px 22px;
+  box-shadow: var(--shadow);
 }
-.stat .value { font-size: 30px; font-weight: 700; line-height: 1; }
-.stat .label { font-size: 13px; color: var(--muted); margin-top: 6px; text-transform: uppercase; letter-spacing: 0.04em; }
+.stat .value { font-size: 34px; font-weight: 700; line-height: 1; letter-spacing: -0.02em; color: var(--heading); }
+.stat .label { font-size: 12px; color: var(--muted); margin-top: 8px; text-transform: uppercase; letter-spacing: 0.09em; font-weight: 600; }
 .stat.error .value { color: var(--error); }
 .stat.ok .value { color: var(--ok); }
 .stat.findings .value { color: var(--accent); }
-h2 { font-size: 20px; font-weight: 700; margin: 40px 0 16px; color: #f1f5f9; }
+
+section { margin-top: 44px; }
+.section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 4px; }
+h2 { font-size: 13px; font-weight: 700; margin: 0; color: var(--muted); text-transform: uppercase; letter-spacing: 0.12em; }
+.section-intro { color: var(--muted); font-size: 14px; margin: 6px 0 20px; max-width: 640px; }
+
 .panel {
   background: var(--panel);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 4px 20px 8px;
-  box-shadow: 0 1px 3px rgba(15,23,42,0.05);
-  overflow-x: auto;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
 }
+.panel.pad { padding: 6px 4px; }
+.panel .scroll { overflow-x: auto; }
+
 table { border-collapse: collapse; width: 100%; font-size: 14px; }
-th, td { padding: 10px 12px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--border); }
-th { color: var(--muted); font-weight: 600; text-transform: uppercase; font-size: 12px; letter-spacing: 0.03em; }
-tbody tr:hover { background: rgba(148,163,184,0.08); }
-.card {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 20px;
-  margin-bottom: 16px;
-  box-shadow: 0 1px 3px rgba(15,23,42,0.05);
+thead th {
+  color: var(--faint); font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: 0.08em;
+  padding: 14px 18px; text-align: left; border-bottom: 1px solid var(--border);
+  background: rgba(255,255,255,0.015);
 }
-.card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 8px; }
-.card-head h3 { margin: 4px 0 0; font-size: 16px; font-weight: 600; }
-.card-category { font-size: 12px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
-.card .table-wrap { overflow-x: auto; margin-top: 12px; }
-.panel.table-wrap { overflow-x: auto; }
+tbody td { padding: 13px 18px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--border-soft); color: var(--text); }
+tbody tr:last-child td { border-bottom: none; }
+tbody tr { transition: background 0.12s ease; }
+tbody tr:hover { background: rgba(142,162,255,0.05); }
+td.right, th.right { text-align: right; }
 tr.row-error td { color: var(--error); }
-.badge { font-size: 13px; font-weight: 700; padding: 4px 12px; border-radius: 999px; white-space: nowrap; }
-.badge-error { background: var(--error-soft); color: var(--error); }
+.pill { display: inline-block; font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 999px; }
+.pill.zero { color: var(--faint); background: rgba(255,255,255,0.04); }
+.pill.count { color: var(--accent); background: var(--accent-soft); }
+.pill.bad { color: var(--error); background: var(--error-soft); }
+
+.badge { font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 999px; white-space: nowrap; }
 .badge-clear { background: var(--ok-soft); color: var(--ok); }
-.badge-findings { background: var(--accent-soft); color: var(--accent); }
 .error { color: var(--error); font-weight: 500; }
 .muted { color: var(--muted); }
-.section-intro { color: var(--muted); font-size: 14px; margin: -8px 0 16px; max-width: 760px; }
-.focus-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; margin-bottom: 8px; }
+
+.focus-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
 .focus-card {
+  position: relative;
   background: var(--panel);
   border: 1px solid var(--border);
-  border-left: 4px solid var(--border);
-  border-radius: 12px;
-  padding: 18px 20px;
-  box-shadow: 0 1px 3px rgba(15,23,42,0.05);
+  border-radius: 16px;
+  padding: 20px 22px;
+  box-shadow: var(--shadow);
+  transition: transform 0.14s ease, border-color 0.14s ease, background 0.14s ease;
 }
-.focus-card.level-high { border-left-color: var(--error); }
-.focus-card.level-medium { border-left-color: var(--warn); }
-.focus-card.level-low { border-left-color: var(--accent); }
-.focus-card.level-clear { border-left-color: var(--ok); opacity: 0.85; }
+.focus-card:hover { transform: translateY(-2px); background: var(--panel-hover); }
 .focus-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.focus-total { font-size: 32px; font-weight: 700; line-height: 1; color: #f1f5f9; }
-.focus-sub { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; margin-top: 2px; }
-.tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 20px; border-bottom: 1px solid var(--border); }
+.focus-cat { display: flex; align-items: center; gap: 9px; font-size: 12.5px; color: var(--text); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); flex: none; }
+.focus-card.level-high .dot { background: var(--error); box-shadow: 0 0 0 4px var(--error-soft); }
+.focus-card.level-medium .dot { background: var(--warn); box-shadow: 0 0 0 4px var(--warn-soft); }
+.focus-card.level-low .dot { background: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
+.focus-card.level-clear .dot { background: var(--ok); box-shadow: 0 0 0 4px var(--ok-soft); }
+.focus-card.level-clear { opacity: 0.72; }
+.focus-total { font-size: 34px; font-weight: 700; line-height: 1; letter-spacing: -0.02em; color: var(--heading); }
+.focus-sub { font-size: 11.5px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 8px; }
+
+.tabs { display: flex; flex-wrap: wrap; gap: 4px; margin: 4px 0 18px; }
 .tab-btn {
-  background: transparent;
-  border: none;
-  border-bottom: 2px solid transparent;
-  padding: 10px 16px;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--muted);
-  cursor: pointer;
-  border-radius: 8px 8px 0 0;
-  transition: color 0.15s, border-color 0.15s, background 0.15s;
+  background: transparent; border: 1px solid transparent;
+  padding: 8px 15px; font-size: 13.5px; font-weight: 600; color: var(--muted);
+  cursor: pointer; border-radius: 10px; transition: all 0.14s ease;
+  display: inline-flex; align-items: center; gap: 8px;
 }
-.tab-btn:hover { color: var(--accent); background: var(--accent-soft); }
-.tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
-.tab-btn .count { font-size: 12px; color: var(--muted); font-weight: 600; margin-left: 6px; }
-.tab-btn.active .count { color: var(--accent); }
+.tab-btn:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+.tab-btn.active { color: var(--heading); background: var(--accent-soft); border-color: rgba(142,162,255,0.25); }
+.tab-btn .count { font-size: 11px; color: var(--faint); font-weight: 700; background: rgba(255,255,255,0.05); padding: 1px 8px; border-radius: 999px; }
+.tab-btn.active .count { color: var(--accent); background: rgba(142,162,255,0.16); }
 .tab-pane { display: none; }
 .tab-pane.active { display: block; }
-footer { text-align: center; color: var(--muted); font-size: 13px; margin-top: 48px; }
+.tab-pane.active.anim { animation: fade 0.2s ease; }
+@keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+.empty { padding: 40px 24px; text-align: center; color: var(--muted); }
+.empty .big { color: var(--ok); font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+
+footer { text-align: center; color: var(--faint); font-size: 12.5px; margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--border-soft); }
+footer .accent { color: var(--muted); font-weight: 600; }
 </style>
 "@
 
     $generatedAt = Get-Date
+    $generatedDisplay = $generatedAt.ToString('dddd d MMMM yyyy · HH:mm', [System.Globalization.CultureInfo]::InvariantCulture)
     $categoryList = ($selectedCategories | ForEach-Object { [System.Net.WebUtility]::HtmlEncode($_) }) -join ', '
     $accountName = [System.Net.WebUtility]::HtmlEncode([string]$azContext.Account.Id)
     $subscriptionName = [System.Net.WebUtility]::HtmlEncode([string]$azContext.Subscription.Name)
@@ -475,23 +516,23 @@ footer { text-align: center; color: var(--muted); font-size: 13px; margin-top: 4
 
         if ($focus.Findings -gt 0) {
             $level = if ($focus.Findings -ge 10) { 'high' } elseif ($focus.Findings -ge 3) { 'medium' } else { 'low' }
-            $failedNote = if ($focus.Failed -gt 0) { "<p class='error'>$($focus.Failed) check(s) failed to run.</p>" } else { '' }
+            $failedNote = if ($focus.Failed -gt 0) { "<p class='error'>$($focus.Failed) check(s) couldn't run.</p>" } else { '' }
             @"
 <div class="focus-card level-$level">
   <div class="focus-head">
-    <span class="card-category">$safeCat</span>
-    <span class="focus-total">$($focus.Findings)</span>
+    <span class="focus-cat"><span class="dot"></span>$safeCat</span>
+    <span class="focus-total num">$($focus.Findings)</span>
   </div>
-  <div class="focus-sub">items to review</div>
+  <div class="focus-sub">to review</div>
   $failedNote
 </div>
 "@
         } else {
-            $failedNote = if ($focus.Failed -gt 0) { "<p class='error'>$($focus.Failed) check(s) failed to run.</p>" } else { "<p class='muted'>No items to review.</p>" }
+            $failedNote = if ($focus.Failed -gt 0) { "<p class='error'>$($focus.Failed) check(s) couldn't run.</p>" } else { "<div class='focus-sub'>nothing to review</div>" }
             @"
 <div class="focus-card level-clear">
   <div class="focus-head">
-    <span class="card-category">$safeCat</span>
+    <span class="focus-cat"><span class="dot"></span>$safeCat</span>
     <span class="badge badge-clear">Clear</span>
   </div>
   $failedNote
@@ -501,14 +542,31 @@ footer { text-align: center; color: var(--muted); font-size: 13px; margin-top: 4
     }
 
     $improvementsHtml = @"
-<h2>Where to Focus</h2>
-<p class="section-intro">Categories are ranked by how many items need your attention. Higher counts mean more potential clean-up, cost savings, or security and compliance improvements.</p>
+<section>
+<div class="section-head"><h2>Where to focus</h2></div>
+<p class="section-intro">Ranked by how much is waiting for you. The bigger the number, the more there is to clean up, save, or secure.</p>
 <div class="focus-grid">
 $($focusCards -join "`n")
 </div>
+</section>
 "@
 
-    $categoryOverviewHtml = $categoryOverview | ConvertTo-Html -Fragment
+    $overviewRowsHtml = foreach ($row in ($categoryOverview | Sort-Object -Property Category)) {
+        $safeCat = [System.Net.WebUtility]::HtmlEncode([string]$row.Category)
+        $findingsCell = if ($row.TotalFindings -gt 0) { "<span class='pill count num'>$($row.TotalFindings)</span>" } else { "<span class='pill zero num'>0</span>" }
+        $failedCell = if ($row.FailedChecks -gt 0) { "<span class='pill bad num'>$($row.FailedChecks)</span>" } else { "<span class='pill zero num'>0</span>" }
+        "<tr><td>$safeCat</td><td class='right num'>$($row.Checks)</td><td class='right'>$failedCell</td><td class='right'>$findingsCell</td></tr>"
+    }
+    $categoryOverviewHtml = @"
+<div class="panel">
+  <table>
+    <thead><tr><th>Category</th><th class="right">Checks</th><th class="right">Issues</th><th class="right">Findings</th></tr></thead>
+    <tbody>
+$($overviewRowsHtml -join "`n")
+    </tbody>
+  </table>
+</div>
+"@
 
     $tabButtons = @()
     $tabPanes = @()
@@ -519,7 +577,7 @@ $($focusCards -join "`n")
         $catFindings = ($summaryRows | Where-Object { $_.Category -eq $cat } | Measure-Object -Property ResultCount -Sum).Sum
         if (-not $catFindings) { $catFindings = 0 }
         $activeClass = if ($tabIndex -eq 0) { ' active' } else { '' }
-        $tabButtons += "<button class='tab-btn$activeClass' data-tab='$tabId'>$safeCat<span class='count'>$catFindings</span></button>"
+        $tabButtons += "<button class='tab-btn$activeClass' data-tab='$tabId'>$safeCat<span class='count num'>$catFindings</span></button>"
 
         $catRows = @($categoryRowsByCategory[$cat])
         if ($catRows.Count -gt 0) {
@@ -535,17 +593,19 @@ $($focusCards -join "`n")
                 "<tr$rowClass>$($cells -join '')</tr>"
             }
             $paneBody = @"
-<div class="panel table-wrap">
+<div class="panel">
+  <div class="scroll">
   <table>
     <thead><tr><th>Check</th><th>Resource</th><th>Resource Group</th><th>Location</th><th>Details</th></tr></thead>
     <tbody>
 $($tableRows -join "`n")
     </tbody>
   </table>
+  </div>
 </div>
 "@
         } else {
-            $paneBody = "<div class='panel'><p class='muted'>No results to review in this category. All checks came back clear.</p></div>"
+            $paneBody = "<div class='panel'><div class='empty'><div class='big'>All clear</div>Nothing to review in this category.</div></div>"
         }
         $tabPanes += "<div class='tab-pane$activeClass' id='$tabId'>$paneBody</div>"
         $tabIndex++
@@ -561,10 +621,10 @@ document.addEventListener('DOMContentLoaded', function () {
     btn.addEventListener('click', function () {
       var target = btn.getAttribute('data-tab');
       document.querySelectorAll('.tab-btn').forEach(function (b) { b.classList.remove('active'); });
-      document.querySelectorAll('.tab-pane').forEach(function (p) { p.classList.remove('active'); });
+      document.querySelectorAll('.tab-pane').forEach(function (p) { p.classList.remove('active'); p.classList.remove('anim'); });
       btn.classList.add('active');
       var pane = document.getElementById(target);
-      if (pane) { pane.classList.add('active'); }
+      if (pane) { pane.classList.add('active'); pane.classList.add('anim'); }
     });
   });
 });
@@ -583,29 +643,37 @@ $style
 <body>
 <header class="hero">
   <div class="inner">
-    <h1>ARG-Kit Overview Report</h1>
+    <div class="brand">
+      <span class="mark">AK</span>
+      <span class="eyebrow">Azure Resource Graph</span>
+    </div>
+    <h1>Overview Report</h1>
+    <p class="lede">A quick read on what's healthy across your environment and where a little attention goes a long way.</p>
     <div class="meta">
-      <span><strong>Generated:</strong> $generatedAt</span>
-      <span><strong>Account:</strong> $accountName</span>
-      <span><strong>Subscription:</strong> $subscriptionName</span>
-      <span><strong>Categories:</strong> $categoryList</span>
+      <span><span class="k">Generated</span><span class="v">$generatedDisplay</span></span>
+      <span><span class="k">Account</span><span class="v">$accountName</span></span>
+      <span><span class="k">Subscription</span><span class="v">$subscriptionName</span></span>
     </div>
   </div>
 </header>
 <div class="stats">
-  <div class="stat"><div class="value">$totalChecks</div><div class="label">Checks Run</div></div>
-  <div class="stat ok"><div class="value">$totalPassed</div><div class="label">Passed</div></div>
-  <div class="stat error"><div class="value">$totalFailed</div><div class="label">Failed</div></div>
-  <div class="stat findings"><div class="value">$totalImprovements</div><div class="label">Possible Improvements</div></div>
+  <div class="stat"><div class="value num">$totalChecks</div><div class="label">Checks run</div></div>
+  <div class="stat ok"><div class="value num">$totalPassed</div><div class="label">Passed</div></div>
+  <div class="stat error"><div class="value num">$totalFailed</div><div class="label">Failed</div></div>
+  <div class="stat findings"><div class="value num">$totalImprovements</div><div class="label">Areas to improve</div></div>
 </div>
 <div class="wrap">
   $improvementsHtml
-  <h2>Category Overview</h2>
-  <div class="panel">$categoryOverviewHtml</div>
-  <h2>Detailed Results</h2>
-  <div class="tabs">$tabsNavHtml</div>
-  $tabsPanesHtml
-  <footer>Generated by ARG-Kit &middot; $generatedAt</footer>
+  <section>
+    <div class="section-head"><h2>Category overview</h2></div>
+    $categoryOverviewHtml
+  </section>
+  <section>
+    <div class="section-head"><h2>Detailed results</h2></div>
+    <div class="tabs">$tabsNavHtml</div>
+    $tabsPanesHtml
+  </section>
+  <footer>Generated with <span class="accent">ARG-Kit</span> &middot; $generatedDisplay</footer>
 </div>
 $tabScript
 </body>
