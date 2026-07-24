@@ -37,6 +37,7 @@ Install-Module -Name ARG-Kit -Scope CurrentUser
 
 ### Generate an overview HTML report
 
+![ARG-Kit Dashboard](./assets/dashboard/arg-dashboard.png)
 > **Note:** You must be signed in to Azure first with `Connect-AzAccount`. `Get-ArgOverviewReport` stops immediately if you are not signed in.
 
 Run all categories and generate one total overview HTML report:
