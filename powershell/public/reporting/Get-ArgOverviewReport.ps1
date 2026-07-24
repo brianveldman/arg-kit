@@ -357,7 +357,6 @@ $($focusCards -join "`n")
 "@
 
     $categoryOverviewHtml = $categoryOverview | ConvertTo-Html -Fragment
-    $summaryHtml = $summaryRows | ConvertTo-Html -Fragment
 
     $tabButtons = @()
     $tabPanes = @()
@@ -427,8 +426,6 @@ $style
   $improvementsHtml
   <h2>Category Overview</h2>
   <div class="panel">$categoryOverviewHtml</div>
-  <h2>Check Summary</h2>
-  <div class="panel">$summaryHtml</div>
   <h2>Detailed Results</h2>
   <div class="tabs">$tabsNavHtml</div>
   $tabsPanesHtml
