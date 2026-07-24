@@ -214,6 +214,7 @@ header.hero .meta span strong { font-weight: 600; }
 .stat .value { font-size: 30px; font-weight: 700; line-height: 1; }
 .stat .label { font-size: 13px; color: var(--muted); margin-top: 6px; text-transform: uppercase; letter-spacing: 0.04em; }
 .stat.error .value { color: var(--error); }
+.stat.ok .value { color: var(--ok); }
 .stat.findings .value { color: var(--accent); }
 h2 { font-size: 20px; font-weight: 700; margin: 40px 0 16px; color: #0f172a; }
 .panel {
@@ -276,6 +277,7 @@ footer { text-align: center; color: var(--muted); font-size: 13px; margin-top: 4
 
     $totalChecks = $summaryRows.Count
     $totalFailed = ($summaryRows | Where-Object { $_.Status -eq 'Error' }).Count
+    $totalPassed = ($summaryRows | Where-Object { $_.Status -ne 'Error' }).Count
     $totalFindings = ($summaryRows | Measure-Object -Property ResultCount -Sum).Sum
     if (-not $totalFindings) { $totalFindings = 0 }
 
@@ -342,8 +344,9 @@ $style
 </header>
 <div class="stats">
   <div class="stat"><div class="value">$totalChecks</div><div class="label">Checks Run</div></div>
+  <div class="stat ok"><div class="value">$totalPassed</div><div class="label">Passed</div></div>
+  <div class="stat error"><div class="value">$totalFailed</div><div class="label">Failed</div></div>
   <div class="stat findings"><div class="value">$totalFindings</div><div class="label">Total Findings</div></div>
-  <div class="stat error"><div class="value">$totalFailed</div><div class="label">Failed Checks</div></div>
 </div>
 <div class="wrap">
   <h2>Category Overview</h2>
