@@ -178,29 +178,29 @@ function Get-ArgOverviewReport {
     $style = @"
 <style>
 :root {
-  --bg: #0f172a;
-  --panel: #ffffff;
-  --muted: #64748b;
-  --border: #e2e8f0;
-  --accent: #2563eb;
-  --accent-soft: #eff6ff;
-  --error: #dc2626;
-  --error-soft: #fef2f2;
-  --ok: #16a34a;
-  --ok-soft: #f0fdf4;
-  --warn: #d97706;
+  --bg: #0b1220;
+  --panel: #111a2e;
+  --muted: #94a3b8;
+  --border: #1e293b;
+  --accent: #60a5fa;
+  --accent-soft: rgba(96,165,250,0.16);
+  --error: #f87171;
+  --error-soft: rgba(248,113,113,0.16);
+  --ok: #4ade80;
+  --ok-soft: rgba(74,222,128,0.16);
+  --warn: #fbbf24;
 }
 * { box-sizing: border-box; }
 body {
   font-family: 'Segoe UI', system-ui, -apple-system, Arial, sans-serif;
   margin: 0;
-  background: #f1f5f9;
-  color: #1e293b;
+  background: var(--bg);
+  color: #e2e8f0;
   line-height: 1.5;
 }
 .wrap { max-width: 1200px; margin: 0 auto; padding: 32px 24px 64px; }
 header.hero {
-  background: linear-gradient(135deg, #1e293b 0%, #2563eb 100%);
+  background: linear-gradient(135deg, #0b1220 0%, #1e3a8a 100%);
   color: #fff;
   padding: 40px 24px;
 }
@@ -221,7 +221,7 @@ header.hero .meta span strong { font-weight: 600; }
 .stat.error .value { color: var(--error); }
 .stat.ok .value { color: var(--ok); }
 .stat.findings .value { color: var(--accent); }
-h2 { font-size: 20px; font-weight: 700; margin: 40px 0 16px; color: #0f172a; }
+h2 { font-size: 20px; font-weight: 700; margin: 40px 0 16px; color: #f1f5f9; }
 .panel {
   background: var(--panel);
   border: 1px solid var(--border);
@@ -233,7 +233,7 @@ h2 { font-size: 20px; font-weight: 700; margin: 40px 0 16px; color: #0f172a; }
 table { border-collapse: collapse; width: 100%; font-size: 14px; }
 th, td { padding: 10px 12px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--border); }
 th { color: var(--muted); font-weight: 600; text-transform: uppercase; font-size: 12px; letter-spacing: 0.03em; }
-tbody tr:hover { background: #f8fafc; }
+tbody tr:hover { background: rgba(148,163,184,0.08); }
 .card {
   background: var(--panel);
   border: 1px solid var(--border);
@@ -267,19 +267,8 @@ tbody tr:hover { background: #f8fafc; }
 .focus-card.level-low { border-left-color: var(--accent); }
 .focus-card.level-clear { border-left-color: var(--ok); opacity: 0.85; }
 .focus-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.focus-total { font-size: 32px; font-weight: 700; line-height: 1; color: #0f172a; }
+.focus-total { font-size: 32px; font-weight: 700; line-height: 1; color: #f1f5f9; }
 .focus-sub { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; margin-top: 2px; }
-.focus-list { list-style: none; margin: 14px 0 0; padding: 0; }
-.focus-list li {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 8px 0;
-  border-top: 1px solid var(--border);
-  font-size: 13px;
-}
-.focus-check { color: #334155; word-break: break-word; }
 .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 20px; border-bottom: 1px solid var(--border); }
 .tab-btn {
   background: transparent;
@@ -333,10 +322,6 @@ footer { text-align: center; color: var(--muted); font-size: 13px; margin-top: 4
 
         if ($focus.Findings -gt 0) {
             $level = if ($focus.Findings -ge 10) { 'high' } elseif ($focus.Findings -ge 3) { 'medium' } else { 'low' }
-            $itemsHtml = foreach ($imp in ($focus.Improvements | Sort-Object -Property Count -Descending)) {
-                $impCheck = [System.Net.WebUtility]::HtmlEncode([string]$imp.Check)
-                "<li><span class='focus-check'>$impCheck</span><span class='badge badge-findings'>$($imp.Count)</span></li>"
-            }
             $failedNote = if ($focus.Failed -gt 0) { "<p class='error'>$($focus.Failed) check(s) failed to run.</p>" } else { '' }
             @"
 <div class="focus-card level-$level">
@@ -345,9 +330,6 @@ footer { text-align: center; color: var(--muted); font-size: 13px; margin-top: 4
     <span class="focus-total">$($focus.Findings)</span>
   </div>
   <div class="focus-sub">items to review</div>
-  <ul class="focus-list">
-$($itemsHtml -join "`n")
-  </ul>
   $failedNote
 </div>
 "@
