@@ -53,7 +53,8 @@ function Get-ArgOverviewReport {
             'Get-ArgCostSavingsSummary',
             'Get-ArgCostStoppedNotDeallocatedVMs',
             'Get-ArgCostUnassociatedStandardPublicIPs',
-            'Get-ArgCostOldSnapshots'
+            'Get-ArgCostOldSnapshots',
+            'Get-ArgCostAvdHostPoolsWithoutScalingPlan'
         )
         Policy = @(
             'Get-ArgPolicyComplianceByPolicyAssignment',
@@ -104,6 +105,7 @@ function Get-ArgOverviewReport {
         'Get-ArgCostStoppedNotDeallocatedVMs'           = 'Stopped (Not Deallocated) VMs'
         'Get-ArgCostUnassociatedStandardPublicIPs'      = 'Unassociated Standard Public IPs'
         'Get-ArgCostOldSnapshots'                       = 'Snapshots Older Than 30 Days'
+        'Get-ArgCostAvdHostPoolsWithoutScalingPlan'     = 'AVD Host Pools without Scaling Plan'
         'Get-ArgPolicyComplianceByPolicyAssignment'     = 'Policy Compliance by Assignment'
         'Get-ArgPolicyComplianceByResourceType'         = 'Policy Compliance by Resource Type'
         'Get-ArgPolicyAllNonCompliantResources'         = 'Non-Compliant Resources'
