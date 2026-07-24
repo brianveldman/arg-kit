@@ -58,7 +58,9 @@ function Get-ArgOverviewReport {
             'Get-ArgCostUnassociatedStandardPublicIPs',
             'Get-ArgCostOldSnapshots',
             'Get-ArgCostAvdHostPoolsWithoutScalingPlan',
-            'Get-ArgCostPremiumDisksOnDeallocatedVMs'
+            'Get-ArgCostPremiumDisksOnDeallocatedVMs',
+            'Get-ArgCostUnattachedPremiumDisks',
+            'Get-ArgCostIdleGateways'
         )
         Reliability = @(
             'Get-ArgReliabilityVmsWithoutAvailabilityZone',
@@ -123,6 +125,8 @@ function Get-ArgOverviewReport {
         'Get-ArgCostOldSnapshots'                       = 'Snapshots Older Than 30 Days'
         'Get-ArgCostAvdHostPoolsWithoutScalingPlan'     = 'AVD Host Pools without Scaling Plan'
         'Get-ArgCostPremiumDisksOnDeallocatedVMs'       = 'Premium Disks on Deallocated VMs'
+        'Get-ArgCostUnattachedPremiumDisks'             = 'Unattached Premium Disks'
+        'Get-ArgCostIdleGateways'                       = 'Idle Gateways (App / VPN)'
         'Get-ArgReliabilityVmsWithoutAvailabilityZone'  = 'VMs without Availability Zone'
         'Get-ArgReliabilityLocallyRedundantStorageAccounts' = 'Storage Accounts without Geo-Redundancy'
         'Get-ArgGovernanceResourcesMissingRequiredTags' = 'Resources Missing Required Tags'
@@ -382,7 +386,7 @@ header.hero .inner { max-width: 1160px; margin: 0 auto; position: relative; }
 .brand .mark {
   width: 40px; height: 40px; border-radius: 11px;
   display: grid; place-items: center;
-  font-weight: 700; font-size: 15px; letter-spacing: 0.02em; color: #ffffff;
+  font-weight: 700; font-size: 13px; letter-spacing: 0.01em; color: #ffffff;
   background: linear-gradient(140deg, var(--accent) 0%, var(--accent-2) 100%);
   box-shadow: 0 6px 18px rgba(124,102,224,0.35);
 }
@@ -631,11 +635,11 @@ $style
 <header class="hero">
   <div class="inner">
     <div class="brand">
-      <span class="mark">AK</span>
+      <span class="mark">ARG</span>
       <span class="eyebrow">Azure Resource Graph</span>
     </div>
     <h1>Overview Report</h1>
-    <p class="lede">A quick read on what's healthy across your environment and where a little attention goes a long way.</p>
+    <p class="lede">The ARG-Kit includes a curated set of queries and an interactive dashboard for quickly assessing the health, security, compliance, and cost posture of your Azure environment.</p>
     <div class="meta">
       <span><span class="k">Generated</span><span class="v">$generatedDisplay</span></span>
       <span><span class="k">Account</span><span class="v">$accountName</span></span>
