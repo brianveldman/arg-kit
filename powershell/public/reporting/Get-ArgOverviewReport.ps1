@@ -30,7 +30,10 @@ function Get-ArgOverviewReport {
             'Get-ArgOrphanedNetworkInterfaceCards',
             'Get-ArgOrphanedLoadBalancers',
             'Get-ArgOrphanedAppServicePlans',
-            'Get-ArgOrphanedAvailabilitySets'
+            'Get-ArgOrphanedAvailabilitySets',
+            'Get-ArgOrphanedRouteTables',
+            'Get-ArgOrphanedNatGateways',
+            'Get-ArgOrphanedResourceGroups'
         )
         Security = @(
             'Get-ArgSecurityPublicAccessStorageAccounts',
@@ -39,12 +42,18 @@ function Get-ArgOverviewReport {
             'Get-ArgSecurityAllResourcesWithSMSI',
             'Get-ArgSecurityAllDefenderForCloudRecommendations',
             'Get-ArgSecurityDefenderForCloudCoverage',
-            'Get-ArgSecurityPurgeProtectionKeyVaults'
+            'Get-ArgSecurityPurgeProtectionKeyVaults',
+            'Get-ArgSecurityNsgOpenManagementPorts',
+            'Get-ArgSecuritySoftDeleteDisabledKeyVaults',
+            'Get-ArgSecuritySqlServersPublicNetworkAccess'
         )
         Cost = @(
             'Get-ArgCostHybridUseBenefitsNotEnabled',
             'Get-ArgCostHybridUseBenefitsEnabled',
-            'Get-ArgCostSavingsSummary'
+            'Get-ArgCostSavingsSummary',
+            'Get-ArgCostStoppedNotDeallocatedVMs',
+            'Get-ArgCostUnassociatedStandardPublicIPs',
+            'Get-ArgCostOldSnapshots'
         )
         Policy = @(
             'Get-ArgPolicyComplianceByPolicyAssignment',
@@ -76,6 +85,9 @@ function Get-ArgOverviewReport {
         'Get-ArgOrphanedLoadBalancers'                  = 'Orphaned Load Balancers'
         'Get-ArgOrphanedAppServicePlans'                = 'Orphaned App Service Plans'
         'Get-ArgOrphanedAvailabilitySets'               = 'Orphaned Availability Sets'
+        'Get-ArgOrphanedRouteTables'                    = 'Orphaned Route Tables'
+        'Get-ArgOrphanedNatGateways'                    = 'Orphaned NAT Gateways'
+        'Get-ArgOrphanedResourceGroups'                 = 'Empty Resource Groups'
         'Get-ArgSecurityPublicAccessStorageAccounts'    = 'Storage Accounts with Public Access'
         'Get-ArgSecurityHttpsOnlyStorageAccounts'       = 'Storage Accounts Not Enforcing HTTPS'
         'Get-ArgSecurityPublicAccessKeyVaults'          = 'Key Vaults with Public Access'
@@ -83,9 +95,15 @@ function Get-ArgOverviewReport {
         'Get-ArgSecurityAllDefenderForCloudRecommendations' = 'Defender for Cloud Recommendations'
         'Get-ArgSecurityDefenderForCloudCoverage'       = 'Defender for Cloud Coverage'
         'Get-ArgSecurityPurgeProtectionKeyVaults'       = 'Key Vaults without Purge Protection'
+        'Get-ArgSecurityNsgOpenManagementPorts'         = 'NSGs Exposing RDP/SSH to the Internet'
+        'Get-ArgSecuritySoftDeleteDisabledKeyVaults'    = 'Key Vaults without Soft Delete'
+        'Get-ArgSecuritySqlServersPublicNetworkAccess'  = 'SQL Servers with Public Network Access'
         'Get-ArgCostHybridUseBenefitsNotEnabled'        = 'Hybrid Use Benefit Not Enabled'
         'Get-ArgCostHybridUseBenefitsEnabled'           = 'Hybrid Use Benefit Enabled'
         'Get-ArgCostSavingsSummary'                     = 'Cost Savings Summary'
+        'Get-ArgCostStoppedNotDeallocatedVMs'           = 'Stopped (Not Deallocated) VMs'
+        'Get-ArgCostUnassociatedStandardPublicIPs'      = 'Unassociated Standard Public IPs'
+        'Get-ArgCostOldSnapshots'                       = 'Snapshots Older Than 30 Days'
         'Get-ArgPolicyComplianceByPolicyAssignment'     = 'Policy Compliance by Assignment'
         'Get-ArgPolicyComplianceByResourceType'         = 'Policy Compliance by Resource Type'
         'Get-ArgPolicyAllNonCompliantResources'         = 'Non-Compliant Resources'
