@@ -157,6 +157,28 @@ function Get-ArgOverviewReport {
     }
     $completedChecks = 0
 
+    $esc = [char]27
+    function Write-ArgLine {
+        param([string]$Text, [string]$Color = 'Gray', [switch]$NoNewline)
+        if ($NoNewline) { Write-Host $Text -ForegroundColor $Color -NoNewline }
+        else { Write-Host $Text -ForegroundColor $Color }
+    }
+
+    $subName = try { $azContext.Subscription.Name } catch { $null }
+    if (-not $subName) { $subName = 'current subscription' }
+
+    Write-Host ''
+    Write-ArgLine "  ╔══════════════════════════════════════════════════════════╗" 'Cyan'
+    Write-ArgLine "  ║              ARG-Kit  ·  Overview Report                  ║" 'Cyan'
+    Write-ArgLine "  ╚══════════════════════════════════════════════════════════╝" 'Cyan'
+    Write-Host "   Subscription : " -NoNewline; Write-ArgLine $subName 'White'
+    Write-Host "   Categories   : " -NoNewline; Write-ArgLine ($selectedCategories -join ', ') 'White'
+    Write-Host "   Checks       : " -NoNewline; Write-ArgLine "$totalCheckCount" 'White'
+    Write-Host ''
+
+    $reportStopwatch = [System.Diagnostics.Stopwatch]::StartNew()
+    $lastCategory = $null
+
     foreach ($currentCategory in $selectedCategories) {
         foreach ($checkName in $categoryChecks[$currentCategory]) {
             $completedChecks++
@@ -166,9 +188,23 @@ function Get-ArgOverviewReport {
                 -CurrentOperation "Running $checkName" `
                 -PercentComplete $percent
 
+            $displayName = if ($displayNames.ContainsKey($checkName)) { $displayNames[$checkName] } else { $checkName }
+
+            if ($currentCategory -ne $lastCategory) {
+                Write-Host ''
+                Write-ArgLine "  ▸ $currentCategory" 'Magenta'
+                $lastCategory = $currentCategory
+            }
+
+            $counter = "[{0,2}/{1}]" -f $completedChecks, $totalCheckCount
+            Write-Host "   $counter " -NoNewline -ForegroundColor DarkGray
+            Write-Host "$esc[38;5;245m⠿$esc[0m " -NoNewline
+            Write-Host ("{0,-48}" -f $displayName) -NoNewline -ForegroundColor Gray
+
             $resultData = $null
             $status = 'Success'
             $errorMessage = $null
+            $checkStopwatch = [System.Diagnostics.Stopwatch]::StartNew()
 
             try {
                 $resultData = & $checkName
@@ -178,11 +214,30 @@ function Get-ArgOverviewReport {
                 $errorMessage = $_.Exception.Message
             }
 
+            $checkStopwatch.Stop()
+            $elapsed = "{0,5:0}ms" -f $checkStopwatch.Elapsed.TotalMilliseconds
+
             $resultCount = if ($null -eq $resultData) {
                 0
             } else {
                 @($resultData).Count
             }
+
+            Write-Host "`r$esc[2K   $counter " -NoNewline -ForegroundColor DarkGray
+            if ($status -eq 'Error') {
+                Write-Host "✗ " -NoNewline -ForegroundColor Red
+                Write-Host ("{0,-48}" -f $displayName) -NoNewline -ForegroundColor Gray
+                Write-Host "  error" -NoNewline -ForegroundColor Red
+            } elseif ($resultCount -gt 0) {
+                Write-Host "● " -NoNewline -ForegroundColor Yellow
+                Write-Host ("{0,-48}" -f $displayName) -NoNewline -ForegroundColor White
+                Write-Host ("  {0,3} to review" -f $resultCount) -NoNewline -ForegroundColor Yellow
+            } else {
+                Write-Host "✓ " -NoNewline -ForegroundColor Green
+                Write-Host ("{0,-48}" -f $displayName) -NoNewline -ForegroundColor DarkGray
+                Write-Host "  clear" -NoNewline -ForegroundColor Green
+            }
+            Write-Host "  $elapsed" -ForegroundColor DarkGray
 
             $summaryRows += [pscustomobject]@{
                 Category    = $currentCategory
@@ -191,8 +246,6 @@ function Get-ArgOverviewReport {
                 ResultCount = $resultCount
                 Error       = $errorMessage
             }
-
-            $displayName = if ($displayNames.ContainsKey($checkName)) { $displayNames[$checkName] } else { $checkName }
 
             if ($status -eq 'Error') {
                 $categoryRowsByCategory[$currentCategory] += [pscustomobject]@{
@@ -234,6 +287,28 @@ function Get-ArgOverviewReport {
     }
 
     Write-Progress -Activity "Generating ARG overview report" -Completed
+
+    $reportStopwatch.Stop()
+    $passedCount = @($summaryRows | Where-Object { $_.Status -ne 'Error' -and $_.ResultCount -eq 0 }).Count
+    $reviewCount = @($summaryRows | Where-Object { $_.Status -ne 'Error' -and $_.ResultCount -gt 0 }).Count
+    $errorCount  = @($summaryRows | Where-Object { $_.Status -eq 'Error' }).Count
+    $findingsTotal = ($summaryRows | Measure-Object -Property ResultCount -Sum).Sum
+    if (-not $findingsTotal) { $findingsTotal = 0 }
+    $elapsedTotal = "{0:mm\:ss}" -f $reportStopwatch.Elapsed
+
+    Write-Host ''
+    Write-ArgLine "  ────────────────────────────────────────────────────────────" 'DarkGray'
+    Write-Host "   Summary   " -NoNewline -ForegroundColor Cyan
+    Write-Host "$($summaryRows.Count) checks in $elapsedTotal" -ForegroundColor White
+    Write-Host "   " -NoNewline
+    Write-Host "✓ $passedCount clear" -NoNewline -ForegroundColor Green
+    Write-Host "   " -NoNewline
+    Write-Host "● $reviewCount to review" -NoNewline -ForegroundColor Yellow
+    Write-Host "   " -NoNewline
+    Write-Host "✗ $errorCount errors" -NoNewline -ForegroundColor Red
+    Write-Host "   " -NoNewline
+    Write-Host "Σ $findingsTotal findings" -ForegroundColor Magenta
+    Write-Host ''
 
     $categoryOverview = $summaryRows |
         Group-Object -Property Category |
@@ -540,6 +615,13 @@ $tabScript
 
     Set-Content -Path $OutputPath -Value $fullHtml -Encoding UTF8
     Write-Verbose "Overview report generated at: $OutputPath"
+
+    Write-Host "   Report saved to " -NoNewline -ForegroundColor Cyan
+    Write-ArgLine $OutputPath 'White'
+    if (-not $OpenReport) {
+        Write-ArgLine "   Tip: re-run with -OpenReport to open it automatically." 'DarkGray'
+    }
+    Write-Host ''
 
     if ($OpenReport) {
         Invoke-Item -Path $OutputPath
