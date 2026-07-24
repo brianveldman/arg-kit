@@ -198,7 +198,8 @@ body {
   color: #e2e8f0;
   line-height: 1.5;
 }
-.wrap { max-width: 1200px; margin: 0 auto; padding: 32px 24px 64px; }
+.wrap { max-width: 1200px; margin: 0 auto; padding: 8px 24px 64px; }
+.wrap > h2:first-child { margin-top: 8px; }
 header.hero {
   background: linear-gradient(135deg, #0b1220 0%, #1e3a8a 100%);
   color: #fff;
@@ -208,7 +209,7 @@ header.hero .inner { max-width: 1200px; margin: 0 auto; }
 header.hero h1 { margin: 0 0 8px; font-size: 28px; font-weight: 700; letter-spacing: -0.02em; }
 header.hero .meta { font-size: 14px; opacity: 0.85; display: flex; flex-wrap: wrap; gap: 20px; }
 header.hero .meta span strong { font-weight: 600; }
-.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin: -32px auto 40px; max-width: 1200px; padding: 0 24px; position: relative; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin: -32px auto 16px; max-width: 1200px; padding: 0 24px; position: relative; }
 .stat {
   background: var(--panel);
   border: 1px solid var(--border);
