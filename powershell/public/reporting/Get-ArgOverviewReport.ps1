@@ -78,7 +78,8 @@ function Get-ArgOverviewReport {
         Deprecations = @(
             'Get-ArgDeprecationBasicPublicIpAddresses',
             'Get-ArgDeprecationTlsStorageAccounts',
-            'Get-ArgDeprecationTlsSqlServers'
+            'Get-ArgDeprecationTlsSqlServers',
+            'Get-ArgDeprecationP2SEntraManualVpnGateways'
         )
         Monitor = @(
             'Get-ArgMonitorAlertsLast2Hours',
@@ -129,6 +130,7 @@ function Get-ArgOverviewReport {
         'Get-ArgDeprecationBasicPublicIpAddresses'      = 'Basic SKU Public IP Addresses (Retiring)'
         'Get-ArgDeprecationTlsStorageAccounts'          = 'Storage Accounts with Outdated TLS'
         'Get-ArgDeprecationTlsSqlServers'               = 'SQL Servers with Outdated TLS'
+        'Get-ArgDeprecationP2SEntraManualVpnGateways'   = 'P2S VPN Gateways Using Manually-Registered Entra Client (Retiring)'
         'Get-ArgMonitorAlertsLast2Hours'                = 'Alerts (Last 2 Hours)'
         'Get-ArgMonitorActiveServiceHealthAlerts'       = 'Active Service Health Alerts'
         'Get-ArgMonitorActivePlannedMaintenanceEvents'  = 'Active Planned Maintenance Events'
