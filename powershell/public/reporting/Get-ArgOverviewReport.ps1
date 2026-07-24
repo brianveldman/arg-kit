@@ -1,7 +1,7 @@
 function Get-ArgOverviewReport {
     [CmdletBinding()]
     param(
-        [ValidateSet('All', 'Orphaned', 'Security', 'Cost', 'Policy', 'Updates', 'Deprecations', 'Monitor')]
+        [ValidateSet('All', 'Orphaned', 'Security', 'Cost', 'Reliability', 'Governance', 'Policy', 'Updates', 'Deprecations', 'Monitor')]
         [string[]]$Category = @('All'),
 
         [string]$OutputPath,
@@ -45,7 +45,9 @@ function Get-ArgOverviewReport {
             'Get-ArgSecurityPurgeProtectionKeyVaults',
             'Get-ArgSecurityNsgOpenManagementPorts',
             'Get-ArgSecuritySoftDeleteDisabledKeyVaults',
-            'Get-ArgSecuritySqlServersPublicNetworkAccess'
+            'Get-ArgSecuritySqlServersPublicNetworkAccess',
+            'Get-ArgSecurityBlobPublicAccessStorageAccounts',
+            'Get-ArgSecurityAppServicesWithoutHttpsOnly'
         )
         Cost = @(
             'Get-ArgCostHybridUseBenefitsNotEnabled',
@@ -54,7 +56,14 @@ function Get-ArgOverviewReport {
             'Get-ArgCostStoppedNotDeallocatedVMs',
             'Get-ArgCostUnassociatedStandardPublicIPs',
             'Get-ArgCostOldSnapshots',
-            'Get-ArgCostAvdHostPoolsWithoutScalingPlan'
+            'Get-ArgCostAvdHostPoolsWithoutScalingPlan',
+            'Get-ArgCostPremiumDisksOnDeallocatedVMs'
+        )
+        Reliability = @(
+            'Get-ArgReliabilityVmsWithoutAvailabilityZone'
+        )
+        Governance = @(
+            'Get-ArgGovernanceResourcesMissingRequiredTags'
         )
         Policy = @(
             'Get-ArgPolicyComplianceByPolicyAssignment',
@@ -99,6 +108,8 @@ function Get-ArgOverviewReport {
         'Get-ArgSecurityNsgOpenManagementPorts'         = 'NSGs Exposing RDP/SSH to the Internet'
         'Get-ArgSecuritySoftDeleteDisabledKeyVaults'    = 'Key Vaults without Soft Delete'
         'Get-ArgSecuritySqlServersPublicNetworkAccess'  = 'SQL Servers with Public Network Access'
+        'Get-ArgSecurityBlobPublicAccessStorageAccounts' = 'Storage Accounts Allowing Blob Public Access'
+        'Get-ArgSecurityAppServicesWithoutHttpsOnly'    = 'App Services Not Enforcing HTTPS'
         'Get-ArgCostHybridUseBenefitsNotEnabled'        = 'Hybrid Use Benefit Not Enabled'
         'Get-ArgCostHybridUseBenefitsEnabled'           = 'Hybrid Use Benefit Enabled'
         'Get-ArgCostSavingsSummary'                     = 'Cost Savings Summary'
@@ -106,6 +117,9 @@ function Get-ArgOverviewReport {
         'Get-ArgCostUnassociatedStandardPublicIPs'      = 'Unassociated Standard Public IPs'
         'Get-ArgCostOldSnapshots'                       = 'Snapshots Older Than 30 Days'
         'Get-ArgCostAvdHostPoolsWithoutScalingPlan'     = 'AVD Host Pools without Scaling Plan'
+        'Get-ArgCostPremiumDisksOnDeallocatedVMs'       = 'Premium Disks on Deallocated VMs'
+        'Get-ArgReliabilityVmsWithoutAvailabilityZone'  = 'VMs without Availability Zone'
+        'Get-ArgGovernanceResourcesMissingRequiredTags' = 'Resources Missing Required Tags'
         'Get-ArgPolicyComplianceByPolicyAssignment'     = 'Policy Compliance by Assignment'
         'Get-ArgPolicyComplianceByResourceType'         = 'Policy Compliance by Resource Type'
         'Get-ArgPolicyAllNonCompliantResources'         = 'Non-Compliant Resources'
@@ -132,9 +146,9 @@ function Get-ArgOverviewReport {
 
     $summaryRows = @()
     $improvementRows = @()
-    $detailSectionsByCategory = [ordered]@{}
+    $categoryRowsByCategory = [ordered]@{}
     foreach ($cat in $selectedCategories) {
-        $detailSectionsByCategory[$cat] = @()
+        $categoryRowsByCategory[$cat] = @()
     }
 
     $totalCheckCount = 0
@@ -179,39 +193,43 @@ function Get-ArgOverviewReport {
             }
 
             $displayName = if ($displayNames.ContainsKey($checkName)) { $displayNames[$checkName] } else { $checkName }
-            $safeCheckName = [System.Net.WebUtility]::HtmlEncode($displayName)
-            $safeCategory = [System.Net.WebUtility]::HtmlEncode($currentCategory)
 
             if ($status -eq 'Error') {
-                $safeErrorMessage = [System.Net.WebUtility]::HtmlEncode($errorMessage)
-                $badge = "<span class='badge badge-error'>Error</span>"
-                $bodyHtml = "<p class='error'>$safeErrorMessage</p>"
-            } elseif ($resultCount -eq 0) {
-                $badge = "<span class='badge badge-clear'>Clear</span>"
-                $bodyHtml = "<p class='muted'>No results returned.</p>"
-            } else {
-                $badge = "<span class='badge badge-findings'>$resultCount to review</span>"
-                $bodyHtml = "<div class='table-wrap'>$($resultData | ConvertTo-Html -Fragment)</div>"
-
+                $categoryRowsByCategory[$currentCategory] += [pscustomobject]@{
+                    Check         = $displayName
+                    Resource      = ''
+                    ResourceGroup = ''
+                    Location      = ''
+                    Details       = "Error: $errorMessage"
+                    RowClass      = 'row-error'
+                }
+            } elseif ($resultCount -gt 0) {
                 $improvementRows += [pscustomobject]@{
                     Category = $currentCategory
                     Check    = $checkName
                     Count    = $resultCount
                 }
-            }
 
-            $detailSectionsByCategory[$currentCategory] += @"
-<section class="card">
-  <div class="card-head">
-    <div>
-      <span class="card-category">$safeCategory</span>
-      <h3>$safeCheckName</h3>
-    </div>
-    $badge
-  </div>
-  $bodyHtml
-</section>
-"@
+                foreach ($item in @($resultData)) {
+                    $props = $item.PSObject.Properties
+                    $getVal = {
+                        param($n)
+                        ($props | Where-Object { $_.Name -ieq $n } | Select-Object -First 1).Value
+                    }
+                    $detailParts = $props |
+                        Where-Object { $_.Name -inotin @('name', 'resourceGroup', 'location', 'subscriptionId', 'id') -and $null -ne $_.Value -and "$($_.Value)" -ne '' } |
+                        ForEach-Object { "$($_.Name): $($_.Value)" }
+
+                    $categoryRowsByCategory[$currentCategory] += [pscustomobject]@{
+                        Check         = $displayName
+                        Resource      = [string](& $getVal 'name')
+                        ResourceGroup = [string](& $getVal 'resourceGroup')
+                        Location      = [string](& $getVal 'location')
+                        Details       = ($detailParts -join '; ')
+                        RowClass      = ''
+                    }
+                }
+            }
         }
     }
 
@@ -300,6 +318,8 @@ tbody tr:hover { background: rgba(148,163,184,0.08); }
 .card-head h3 { margin: 4px 0 0; font-size: 16px; font-weight: 600; }
 .card-category { font-size: 12px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
 .card .table-wrap { overflow-x: auto; margin-top: 12px; }
+.panel.table-wrap { overflow-x: auto; }
+tr.row-error td { color: var(--error); }
 .badge { font-size: 13px; font-weight: 700; padding: 4px 12px; border-radius: 999px; white-space: nowrap; }
 .badge-error { background: var(--error-soft); color: var(--error); }
 .badge-clear { background: var(--ok-soft); color: var(--ok); }
@@ -414,7 +434,7 @@ $($focusCards -join "`n")
     $tabButtons = @()
     $tabPanes = @()
     $tabIndex = 0
-    foreach ($cat in $detailSectionsByCategory.Keys) {
+    foreach ($cat in $categoryRowsByCategory.Keys) {
         $safeCat = [System.Net.WebUtility]::HtmlEncode([string]$cat)
         $tabId = "tab-$tabIndex"
         $catFindings = ($summaryRows | Where-Object { $_.Category -eq $cat } | Measure-Object -Property ResultCount -Sum).Sum
@@ -422,8 +442,32 @@ $($focusCards -join "`n")
         $activeClass = if ($tabIndex -eq 0) { ' active' } else { '' }
         $tabButtons += "<button class='tab-btn$activeClass' data-tab='$tabId'>$safeCat<span class='count'>$catFindings</span></button>"
 
-        $paneBody = $detailSectionsByCategory[$cat] -join "`n"
-        if (-not $paneBody) { $paneBody = "<p class='muted'>No checks in this category.</p>" }
+        $catRows = @($categoryRowsByCategory[$cat])
+        if ($catRows.Count -gt 0) {
+            $tableRows = foreach ($row in $catRows) {
+                $rowClass = if ($row.RowClass) { " class='$($row.RowClass)'" } else { '' }
+                $cells = @(
+                    "<td>$([System.Net.WebUtility]::HtmlEncode([string]$row.Check))</td>"
+                    "<td>$([System.Net.WebUtility]::HtmlEncode([string]$row.Resource))</td>"
+                    "<td>$([System.Net.WebUtility]::HtmlEncode([string]$row.ResourceGroup))</td>"
+                    "<td>$([System.Net.WebUtility]::HtmlEncode([string]$row.Location))</td>"
+                    "<td>$([System.Net.WebUtility]::HtmlEncode([string]$row.Details))</td>"
+                )
+                "<tr$rowClass>$($cells -join '')</tr>"
+            }
+            $paneBody = @"
+<div class="panel table-wrap">
+  <table>
+    <thead><tr><th>Check</th><th>Resource</th><th>Resource Group</th><th>Location</th><th>Details</th></tr></thead>
+    <tbody>
+$($tableRows -join "`n")
+    </tbody>
+  </table>
+</div>
+"@
+        } else {
+            $paneBody = "<div class='panel'><p class='muted'>No results to review in this category. All checks came back clear.</p></div>"
+        }
         $tabPanes += "<div class='tab-pane$activeClass' id='$tabId'>$paneBody</div>"
         $tabIndex++
     }
