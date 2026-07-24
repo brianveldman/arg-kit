@@ -382,12 +382,12 @@ header.hero .inner { max-width: 1160px; margin: 0 auto; position: relative; }
   background: linear-gradient(140deg, var(--accent) 0%, var(--accent-2) 100%);
   box-shadow: 0 6px 18px rgba(142,162,255,0.35);
 }
-.brand .eyebrow { font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
-header.hero h1 { margin: 0; font-size: 30px; font-weight: 700; letter-spacing: -0.03em; color: var(--heading); }
-header.hero .lede { margin: 8px 0 0; color: var(--muted); font-size: 15px; max-width: 620px; }
-.meta { margin-top: 24px; display: flex; flex-wrap: wrap; gap: 10px 28px; font-size: 13.5px; color: var(--muted); }
-.meta .k { color: var(--faint); text-transform: uppercase; letter-spacing: 0.08em; font-size: 11px; font-weight: 600; margin-right: 8px; }
-.meta .v { color: var(--text); }
+.brand .eyebrow { font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.6); font-weight: 600; }
+header.hero h1 { margin: 0; font-size: 30px; font-weight: 700; letter-spacing: -0.03em; color: #ffffff; }
+header.hero .lede { margin: 8px 0 0; color: rgba(255,255,255,0.72); font-size: 15px; max-width: 620px; }
+.meta { margin-top: 24px; display: flex; flex-wrap: wrap; gap: 10px 28px; font-size: 13.5px; }
+.meta .k { color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.08em; font-size: 11px; font-weight: 600; margin-right: 8px; }
+.meta .v { color: #ffffff; }
 
 .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; margin: -32px auto 0; max-width: 1160px; padding: 0 28px; position: relative; z-index: 2; }
 .stat {
@@ -551,23 +551,6 @@ $($focusCards -join "`n")
 </section>
 "@
 
-    $overviewRowsHtml = foreach ($row in ($categoryOverview | Sort-Object -Property Category)) {
-        $safeCat = [System.Net.WebUtility]::HtmlEncode([string]$row.Category)
-        $findingsCell = if ($row.TotalFindings -gt 0) { "<span class='pill count num'>$($row.TotalFindings)</span>" } else { "<span class='pill zero num'>0</span>" }
-        $failedCell = if ($row.FailedChecks -gt 0) { "<span class='pill bad num'>$($row.FailedChecks)</span>" } else { "<span class='pill zero num'>0</span>" }
-        "<tr><td>$safeCat</td><td class='right num'>$($row.Checks)</td><td class='right'>$failedCell</td><td class='right'>$findingsCell</td></tr>"
-    }
-    $categoryOverviewHtml = @"
-<div class="panel">
-  <table>
-    <thead><tr><th>Category</th><th class="right">Checks</th><th class="right">Issues</th><th class="right">Findings</th></tr></thead>
-    <tbody>
-$($overviewRowsHtml -join "`n")
-    </tbody>
-  </table>
-</div>
-"@
-
     $tabButtons = @()
     $tabPanes = @()
     $tabIndex = 0
@@ -664,10 +647,6 @@ $style
 </div>
 <div class="wrap">
   $improvementsHtml
-  <section>
-    <div class="section-head"><h2>Category overview</h2></div>
-    $categoryOverviewHtml
-  </section>
   <section>
     <div class="section-head"><h2>Detailed results</h2></div>
     <div class="tabs">$tabsNavHtml</div>
