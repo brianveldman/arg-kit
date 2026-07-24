@@ -68,6 +68,38 @@ function Get-ArgOverviewReport {
         )
     }
 
+    $displayNames = @{
+        'Get-ArgOrphanedNetworkSecurityGroups'          = 'Orphaned Network Security Groups'
+        'Get-ArgOrphanedPublicIPAddresses'              = 'Orphaned Public IP Addresses'
+        'Get-ArgOrphanedDisks'                          = 'Orphaned Disks'
+        'Get-ArgOrphanedNetworkInterfaceCards'          = 'Orphaned Network Interface Cards'
+        'Get-ArgOrphanedLoadBalancers'                  = 'Orphaned Load Balancers'
+        'Get-ArgOrphanedAppServicePlans'                = 'Orphaned App Service Plans'
+        'Get-ArgOrphanedAvailabilitySets'               = 'Orphaned Availability Sets'
+        'Get-ArgSecurityPublicAccessStorageAccounts'    = 'Storage Accounts with Public Access'
+        'Get-ArgSecurityHttpsOnlyStorageAccounts'       = 'Storage Accounts Not Enforcing HTTPS'
+        'Get-ArgSecurityPublicAccessKeyVaults'          = 'Key Vaults with Public Access'
+        'Get-ArgSecurityAllResourcesWithSMSI'           = 'Resources with System-Assigned Managed Identity'
+        'Get-ArgSecurityAllDefenderForCloudRecommendations' = 'Defender for Cloud Recommendations'
+        'Get-ArgSecurityDefenderForCloudCoverage'       = 'Defender for Cloud Coverage'
+        'Get-ArgSecurityPurgeProtectionKeyVaults'       = 'Key Vaults without Purge Protection'
+        'Get-ArgCostHybridUseBenefitsNotEnabled'        = 'Hybrid Use Benefit Not Enabled'
+        'Get-ArgCostHybridUseBenefitsEnabled'           = 'Hybrid Use Benefit Enabled'
+        'Get-ArgCostSavingsSummary'                     = 'Cost Savings Summary'
+        'Get-ArgPolicyComplianceByPolicyAssignment'     = 'Policy Compliance by Assignment'
+        'Get-ArgPolicyComplianceByResourceType'         = 'Policy Compliance by Resource Type'
+        'Get-ArgPolicyAllNonCompliantResources'         = 'Non-Compliant Resources'
+        'Get-ArgPendingUpdates'                         = 'Pending Updates'
+        'Get-ArgWindowsUpdateInstallations'             = 'Windows Update Installations'
+        'Get-ArgLinuxUpdateInstallations'               = 'Linux Update Installations'
+        'Get-ArgDeprecationBasicPublicIpAddresses'      = 'Basic SKU Public IP Addresses (Retiring)'
+        'Get-ArgDeprecationTlsStorageAccounts'          = 'Storage Accounts with Outdated TLS'
+        'Get-ArgDeprecationTlsSqlServers'               = 'SQL Servers with Outdated TLS'
+        'Get-ArgMonitorAlertsLast2Hours'                = 'Alerts (Last 2 Hours)'
+        'Get-ArgMonitorActiveServiceHealthAlerts'       = 'Active Service Health Alerts'
+        'Get-ArgMonitorActivePlannedMaintenanceEvents'  = 'Active Planned Maintenance Events'
+    }
+
     $selectedCategories = if ($Category -contains 'All') {
         $categoryChecks.Keys
     } else {
@@ -126,7 +158,8 @@ function Get-ArgOverviewReport {
                 Error       = $errorMessage
             }
 
-            $safeCheckName = [System.Net.WebUtility]::HtmlEncode($checkName)
+            $displayName = if ($displayNames.ContainsKey($checkName)) { $displayNames[$checkName] } else { $checkName }
+            $safeCheckName = [System.Net.WebUtility]::HtmlEncode($displayName)
             $safeCategory = [System.Net.WebUtility]::HtmlEncode($currentCategory)
 
             if ($status -eq 'Error') {
