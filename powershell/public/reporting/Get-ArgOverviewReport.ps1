@@ -374,24 +374,24 @@ header.hero {
   padding: 44px 28px 56px;
   border-bottom: 1px solid var(--border-soft);
   background:
-    radial-gradient(900px 400px at 12% -160px, rgba(167,139,250,0.16), transparent 65%),
-    linear-gradient(180deg, #0d1220 0%, var(--bg) 100%);
+    radial-gradient(900px 400px at 12% -160px, rgba(167,139,250,0.14), transparent 65%),
+    linear-gradient(180deg, #ffffff 0%, #eef1f8 100%);
 }
 header.hero .inner { max-width: 1160px; margin: 0 auto; position: relative; }
 .brand { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; }
 .brand .mark {
   width: 40px; height: 40px; border-radius: 11px;
   display: grid; place-items: center;
-  font-weight: 700; font-size: 15px; letter-spacing: 0.02em; color: #0b0e16;
+  font-weight: 700; font-size: 15px; letter-spacing: 0.02em; color: #ffffff;
   background: linear-gradient(140deg, var(--accent) 0%, var(--accent-2) 100%);
-  box-shadow: 0 6px 18px rgba(142,162,255,0.35);
+  box-shadow: 0 6px 18px rgba(124,102,224,0.35);
 }
-.brand .eyebrow { font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: #ffffff; font-weight: 600; }
-header.hero h1 { margin: 0; font-size: 30px; font-weight: 700; letter-spacing: -0.03em; color: #ffffff; }
-header.hero .lede { margin: 8px 0 0; color: rgba(255,255,255,0.9); font-size: 15px; max-width: 620px; }
+.brand .eyebrow { font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: #6b7280; font-weight: 600; }
+header.hero h1 { margin: 0; font-size: 30px; font-weight: 700; letter-spacing: -0.03em; color: #0b1120; }
+header.hero .lede { margin: 8px 0 0; color: #475569; font-size: 15px; max-width: 620px; }
 .meta { margin-top: 24px; display: flex; flex-wrap: wrap; gap: 10px 28px; font-size: 13.5px; }
-.meta .k { color: rgba(255,255,255,0.75); text-transform: uppercase; letter-spacing: 0.08em; font-size: 11px; font-weight: 600; margin-right: 8px; }
-.meta .v { color: #ffffff; }
+.meta .k { color: #94a3b8; text-transform: uppercase; letter-spacing: 0.08em; font-size: 11px; font-weight: 600; margin-right: 8px; }
+.meta .v { color: #0b1120; }
 
 .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; margin: -32px auto 0; max-width: 1160px; padding: 0 28px; position: relative; z-index: 2; }
 .stat {
