@@ -79,6 +79,7 @@ function Get-ArgOverviewReport {
     }
 
     $summaryRows = @()
+    $improvementRows = @()
     $detailSectionsByCategory = [ordered]@{}
     foreach ($cat in $selectedCategories) {
         $detailSectionsByCategory[$cat] = @()
@@ -138,8 +139,14 @@ function Get-ArgOverviewReport {
                 $badge = "<span class='badge badge-clear'>Clear</span>"
                 $bodyHtml = "<p class='muted'>No results returned.</p>"
             } else {
-                $badge = "<span class='badge badge-findings'>$resultCount</span>"
+                $badge = "<span class='badge badge-findings'>$resultCount to review</span>"
                 $bodyHtml = "<div class='table-wrap'>$($resultData | ConvertTo-Html -Fragment)</div>"
+
+                $improvementRows += [pscustomobject]@{
+                    Category = $currentCategory
+                    Check    = $checkName
+                    Count    = $resultCount
+                }
             }
 
             $detailSectionsByCategory[$currentCategory] += @"
@@ -247,6 +254,17 @@ tbody tr:hover { background: #f8fafc; }
 .badge-findings { background: var(--accent-soft); color: var(--accent); }
 .error { color: var(--error); font-weight: 500; }
 .muted { color: var(--muted); }
+.improvement-list { list-style: none; margin: 12px 0 4px; padding: 0; }
+.improvement {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+.improvement:last-child { border-bottom: none; }
+.improvement-name { font-size: 15px; font-weight: 600; margin-top: 2px; }
 .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 20px; border-bottom: 1px solid var(--border); }
 .tab-btn {
   background: transparent;
@@ -280,6 +298,39 @@ footer { text-align: center; color: var(--muted); font-size: 13px; margin-top: 4
     $totalPassed = ($summaryRows | Where-Object { $_.Status -ne 'Error' }).Count
     $totalFindings = ($summaryRows | Measure-Object -Property ResultCount -Sum).Sum
     if (-not $totalFindings) { $totalFindings = 0 }
+    $totalImprovements = $improvementRows.Count
+
+    if ($improvementRows.Count -gt 0) {
+        $improvementItems = foreach ($imp in $improvementRows) {
+            $impCat = [System.Net.WebUtility]::HtmlEncode([string]$imp.Category)
+            $impCheck = [System.Net.WebUtility]::HtmlEncode([string]$imp.Check)
+            @"
+<li class="improvement">
+  <div>
+    <span class="card-category">$impCat</span>
+    <div class="improvement-name">$impCheck</div>
+  </div>
+  <span class="badge badge-findings">$($imp.Count) to review</span>
+</li>
+"@
+        }
+        $improvementsHtml = @"
+<h2>Possible Improvements</h2>
+<div class="panel">
+  <p class="muted">These checks returned results worth reviewing for potential clean-up, cost savings, or security and compliance improvements.</p>
+  <ul class="improvement-list">
+$($improvementItems -join "`n")
+  </ul>
+</div>
+"@
+    } else {
+        $improvementsHtml = @"
+<h2>Possible Improvements</h2>
+<div class="panel">
+  <p class="muted">No improvement opportunities found. All checks came back clear. &#127881;</p>
+</div>
+"@
+    }
 
     $categoryOverviewHtml = $categoryOverview | ConvertTo-Html -Fragment
     $summaryHtml = $summaryRows | ConvertTo-Html -Fragment
@@ -346,9 +397,10 @@ $style
   <div class="stat"><div class="value">$totalChecks</div><div class="label">Checks Run</div></div>
   <div class="stat ok"><div class="value">$totalPassed</div><div class="label">Passed</div></div>
   <div class="stat error"><div class="value">$totalFailed</div><div class="label">Failed</div></div>
-  <div class="stat findings"><div class="value">$totalFindings</div><div class="label">Total Findings</div></div>
+  <div class="stat findings"><div class="value">$totalImprovements</div><div class="label">Possible Improvements</div></div>
 </div>
 <div class="wrap">
+  $improvementsHtml
   <h2>Category Overview</h2>
   <div class="panel">$categoryOverviewHtml</div>
   <h2>Check Summary</h2>
