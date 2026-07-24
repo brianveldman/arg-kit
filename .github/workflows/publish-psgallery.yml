@@ -1,0 +1,114 @@
+name: Publish to PowerShell Gallery
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Module version to publish (e.g. 1.2.3)"
+        required: true
+        type: string
+      prerelease:
+        description: "Optional prerelease label (e.g. beta1). Leave empty for a stable release."
+        required: false
+        type: string
+      commit_version_bump:
+        description: "Commit the version bump back to the repository"
+        required: true
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      MODULE_NAME: ARG-Kit
+      SOURCE_DIR: powershell
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate version input
+        shell: pwsh
+        run: |
+          $version = '${{ inputs.version }}'
+          if ($version -notmatch '^\d+\.\d+\.\d+$') {
+            throw "Version '$version' is invalid. Use a three-part version like 1.2.3."
+          }
+          $prerelease = '${{ inputs.prerelease }}'
+          if ($prerelease -and $prerelease -notmatch '^[a-zA-Z0-9]+$') {
+            throw "Prerelease '$prerelease' is invalid. Use only letters and numbers (e.g. beta1)."
+          }
+          Write-Host "Version OK: $version$([string]::IsNullOrEmpty($prerelease) ? '' : "-$prerelease")"
+
+      - name: Update module manifest version
+        shell: pwsh
+        run: |
+          $manifest = Join-Path $env:SOURCE_DIR "$($env:MODULE_NAME).psd1"
+          $version = '${{ inputs.version }}'
+          $prerelease = '${{ inputs.prerelease }}'
+
+          $params = @{ Path = $manifest; ModuleVersion = $version }
+          if (-not [string]::IsNullOrWhiteSpace($prerelease)) {
+            $params.Prerelease = $prerelease
+          }
+          Update-ModuleManifest @params
+
+          # Verify the manifest is still valid after editing
+          $m = Test-ModuleManifest -Path $manifest
+          Write-Host "Manifest version is now $($m.Version)"
+
+      - name: Stage module for publishing
+        shell: pwsh
+        run: |
+          # Publish-Module expects the manifest inside a folder named after the module.
+          $staging = Join-Path $env:RUNNER_TEMP $env:MODULE_NAME
+          if (Test-Path $staging) { Remove-Item $staging -Recurse -Force }
+          New-Item -ItemType Directory -Path $staging | Out-Null
+          Copy-Item -Path (Join-Path $env:SOURCE_DIR '*') -Destination $staging -Recurse
+          "STAGING_DIR=$staging" | Out-File -FilePath $env:GITHUB_ENV -Append
+
+      - name: Validate module loads
+        shell: pwsh
+        run: |
+          $manifest = Join-Path $env:STAGING_DIR "$($env:MODULE_NAME).psd1"
+          Test-ModuleManifest -Path $manifest | Out-Null
+          Import-Module $manifest -Force
+          $exported = (Get-Command -Module $env:MODULE_NAME).Count
+          Write-Host "Imported $env:MODULE_NAME with $exported exported commands."
+          if ($exported -lt 1) { throw "No commands were exported; aborting publish." }
+
+      - name: Publish to PowerShell Gallery
+        shell: pwsh
+        env:
+          PSGALLERY_API_KEY: ${{ secrets.PSGALLERY_API_KEY }}
+        run: |
+          if ([string]::IsNullOrWhiteSpace($env:PSGALLERY_API_KEY)) {
+            throw "Secret PSGALLERY_API_KEY is not set. Add it in repo Settings > Secrets and variables > Actions."
+          }
+          Publish-Module -Path $env:STAGING_DIR -NuGetApiKey $env:PSGALLERY_API_KEY -Verbose
+
+      - name: Commit version bump
+        if: ${{ inputs.commit_version_bump }}
+        shell: pwsh
+        run: |
+          $version = '${{ inputs.version }}'
+          $prerelease = '${{ inputs.prerelease }}'
+          $tag = if ([string]::IsNullOrWhiteSpace($prerelease)) { "v$version" } else { "v$version-$prerelease" }
+
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add "$env:SOURCE_DIR/$($env:MODULE_NAME).psd1"
+          if (git diff --cached --quiet) {
+            Write-Host "No manifest changes to commit."
+          } else {
+            git commit -m "Release $tag"
+            git push
+          }
+
+          git tag $tag
+          git push origin $tag
